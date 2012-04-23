@@ -10,9 +10,9 @@ class Menu:
 class YN_Prompt(Menu):
     def __init__(self):
         self.active = 0
-        self.canvas = pygame.Surface((205,155))
+        self.canvas = pygame.Surface((105,85))
         self.canvas.fill((0,0,250))
-        pygame.draw.rect(self.canvas,(255,215,0),((0,0),(210,160)),5)
+        pygame.draw.rect(self.canvas,(255,215,0),((0,0),(105,85)),5)
         self.canvas.set_alpha(120)
         self.pos = [800-self.canvas.get_width(),450-self.canvas.get_height()]
         self.options = ["Yes","No"]
@@ -122,8 +122,12 @@ class Player_Turn:
         self.active = 0
         self.canvas = pygame.Surface((205,155))
         self.canvas.fill((0,0,250))
-        pygame.draw.rect(self.canvas,(255,215,0),((0,0),(210,160)),5)
+        pygame.draw.rect(self.canvas,(250,0,0),((0,10),(5,150)),5)
+
+        pygame.draw.rect(self.canvas,(255,215,0),((0,0),(255,5)),5)
+        pygame.draw.rect(self.canvas,(255,215,0),((0,150),(255,5)),5)
         self.canvas.set_alpha(120)
+        self.canvas.set_colorkey((250,0,0))
         self.pos = [800-self.canvas.get_width(),450-self.canvas.get_height()]
         self.options = ["Move","Fight","Done","Back"]
         self.available_options = [1,0,1,1]
