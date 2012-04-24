@@ -85,6 +85,7 @@ class Menu_Move(Menu):
         choosing_facing = 0
         moving = 0
         move_t=0
+        update_position = 0
         while 1:
             #if moving==1 and actor.mov_vector==[]:
                 #moving = 0
@@ -98,9 +99,18 @@ class Menu_Move(Menu):
                         choosing_facing = 1
                     else:
                         actor.facing =  utils.get_direction(actor.pos,actor.mov_vector[0])
-                        [actor.pos[0],actor.pos[1]] = actor.mov_vector[0]
-                        actor.mov_vector.remove(actor.mov_vector[0])
-                        move_t=20
+                        if actor.facing[0]=='s':
+                            [actor.pos[0],actor.pos[1]] = actor.mov_vector[0]
+                            actor.mov_vector.remove(actor.mov_vector[0])
+                            move_t=20
+                        elif update_position==1:
+                            [actor.pos[0],actor.pos[1]] = actor.mov_vector[0]
+                            actor.mov_vector.remove(actor.mov_vector[0])
+                            actor.offset = [0,0]
+                            update_position = 0
+                        else: 
+                            update_position = 1
+                            move_t=20
                     #actor.offset=[0,0]
                 if actor.facing == 'se':
                     actor.offset[0] = -move_t*2
@@ -108,12 +118,12 @@ class Menu_Move(Menu):
                 elif actor.facing == 'sw':
                     actor.offset[0] = move_t*2
                     actor.offset[1] = -move_t*1
-                elif actor.facing== 'nw':
-                    actor.offset[0] = move_t*2
-                    actor.offset[1] = move_t*1
-                elif actor.facing == 'ne':
-                    actor.offset[0] = -move_t*2
-                    actor.offset[1] = move_t*1
+                elif actor.facing== 'nw' and update_position==1:
+                    actor.offset[0] = move_t*2-40
+                    actor.offset[1] = move_t*1-20
+                elif actor.facing == 'ne' and update_position==1:
+                    actor.offset[0] = -move_t*2+40
+                    actor.offset[1] = move_t*1-20
 
 
                 

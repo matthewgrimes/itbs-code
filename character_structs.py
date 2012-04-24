@@ -13,7 +13,7 @@ class Actor:
     def __init__(self, image,stats):
         images,rects = load_image(image,-1)
 #        self.image,self.rect = load_image(image,-1)
-        self.pos = [3,3]
+        self.pos = [3,5]
         self.level = 1
         self.mov_vector=[]
         self.moved = 0
