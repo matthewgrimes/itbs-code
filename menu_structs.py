@@ -67,7 +67,7 @@ class Menu_Move(Menu):
     def Activate(self,actor,canvas,screen,current_map,cursor,actors):
         OpenList = [actor.pos]
         cursors = [cursor]
-        openList,ancestry = utils.draw_circle(actor,current_map,actors,3)
+        openList,ancestry = utils.draw_circle(actor,current_map,actors,actor.character.speed)
         for spot in openList:
             cursor = map_structs.Blue_Cursor(80,2,[])
             [cursor.pos[0],cursor.pos[1]] = spot
@@ -86,12 +86,37 @@ class Menu_Move(Menu):
         moving = 0
         move_t=0
         while 1:
-            if moving==1 and actor.mov_vector==[]:
-                moving = 0
-                choosing_facing = 1
-            elif moving==1:
-                [actor.pos[0],actor.pos[1]] = actor.mov_vector[0]
-                actor.mov_vector.remove(actor.mov_vector[0])
+            #if moving==1 and actor.mov_vector==[]:
+                #moving = 0
+                #actor.offset=[0,0]
+                #choosing_facing = 1
+            if moving==1:
+                move_t-=1
+                if move_t<0:
+                    if actor.mov_vector==[]:
+                        moving = 0
+                        choosing_facing = 1
+                    else:
+                        actor.facing =  utils.get_direction(actor.pos,actor.mov_vector[0])
+                        [actor.pos[0],actor.pos[1]] = actor.mov_vector[0]
+                        actor.mov_vector.remove(actor.mov_vector[0])
+                        move_t=20
+                    #actor.offset=[0,0]
+                if actor.facing == 'se':
+                    actor.offset[0] = -move_t*2
+                    actor.offset[1] = -move_t*1
+                elif actor.facing == 'sw':
+                    actor.offset[0] = move_t*2
+                    actor.offset[1] = -move_t*1
+                elif actor.facing== 'nw':
+                    actor.offset[0] = move_t*2
+                    actor.offset[1] = move_t*1
+                elif actor.facing == 'ne':
+                    actor.offset[0] = -move_t*2
+                    actor.offset[1] = move_t*1
+
+
+                
                 #actor.offset = [actor.pos[0]+move_t*(actor.mov_vector[0]-actor.pos[0]),
                 #                actor.pos[1]+move_t*(actor.mov_vector[1]-actor.pos[1])]
                 #move_t+=.1
@@ -112,6 +137,7 @@ class Menu_Move(Menu):
                                 #        actor.level+=1
                                 actor.moved = 1
                                 actor.Move(cursors[-1].pos,ancestry)
+                                actor.mov_vector.remove(actor.mov_vector[0])
                                 moving = 1
                         else:
                             return 1
@@ -283,12 +309,16 @@ class Player_Attack(Menu):
                                     return 1
                     if event.key==K_RIGHT:
                         cursors[-1].Move('right')
+                        actor.facing = 'se'
                     if event.key==K_LEFT:
                         cursors[-1].Move('left')
+                        actor.facing = 'nw'
                     if event.key==K_DOWN:
                         cursors[-1].Move('down')
+                        actor.facing = 'sw'
                     if event.key==K_UP:
                         cursors[-1].Move('up')
+                        actor.facing = 'ne'
                     if cursors[-1].pos not in openList: cursors[-1].pos = [old_pos_x,old_pos_y]
 
             canvas.fill((0,0,0))

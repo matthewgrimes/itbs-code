@@ -39,8 +39,8 @@ class MainGame:
         self.cursor = map_structs.Cursor((0,250,0),tile_size,2,
                 [demo_map[1],map_size])
         self.actors=[#character_structs.Actor('characters/Knight5M-SW.gif',{'hp':15,'mp':8,'speed':2}),
-                character_structs.Actor('characters/assassin.png',{'hp':12,'mp':10,'speed':1}),
-                character_structs.Actor('characters/sniper.png',{'hp':12,'mp':10,'speed':1})
+                character_structs.Actor('characters/assassin.png',{'hp':12,'mp':10,'speed':4}),
+                character_structs.Actor('characters/sniper.png',{'hp':12,'mp':10,'speed':5})
                 ]
 
         self.menus=[menu_structs.Menu_Move()]

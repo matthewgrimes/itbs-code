@@ -104,3 +104,28 @@ def draw_circle(actor,current_map,actors,radius,people_ok=0):
 
 def sort_actors(actors):
     return range(0,len(actors))
+
+def get_direction(start,end):
+    if start[1]%2==1:
+        if start[0]==end[0]:
+            if end[1]==start[1]-1:
+                return 'nw'
+            else:
+                return 'sw'
+        else:
+            if end[1]==start[1]-1:
+                return 'ne'
+            else:
+                return 'se'
+    else:
+        if start[0]==end[0]:
+            if end[1]==start[1]-1:
+                return 'ne'
+            else:
+                return 'se'
+        else:
+            if end[1]==start[1]-1:
+                return 'nw'
+            else:
+                return 'sw'
+
