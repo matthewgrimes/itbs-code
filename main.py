@@ -10,6 +10,7 @@ try:
     import getopt
     import pygame
     import utils
+    import pickle
     from socket import *
     from pygame.locals import *
     import map_structs
@@ -19,101 +20,8 @@ except ImportError, err:
     print "couldn't load module. %s" % (err)
     sys.exit(2)
 
-demo_map = [4, # number of levels
-    # level 0
-    [-1,-1,-1,1,0,0,0,0,
-     -1,-1, 1,0,0,0,0,0,
-     -1,-1, 1,0,0,0,0,0,
-     -1, 1, 0,0,0,0,0,0,
-     -1, 1, 0,0,0,0,0,0,
-      1, 0, 0,0,0,0,0,0,
-      1, 0, 0,0,3,2,0,0,
-      0, 0, 0,0,2,2,0,1,
-     
-     -1,-1,-1,1,0,0,0,0,
-     -1,-1, 1,0,0,0,0,0,
-     -1,-1, 1,0,0,0,0,0,
-     -1, 1, 0,0,0,0,0,0,
-     -1, 1, 0,0,0,0,0,0,
-      1, 0, 0,0,0,0,0,0,
-      1, 0, 0,0,0,2,0,0,
-      0, 0, 0,0,2,2,0,1,
-     ],
-    # level 1
-    [-1,-1,-1, 1,-1,-1,-1,-1,
-     -1,-1, 1,-1,-1,-1,-1,-1,
-     -1,-1, 1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,1,-1,-1,
-     -1,-1,-1,-1,0,0,-1,-1,
-     -1,-1,-1,-1,0,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-
-     -1,-1,-1, 1,-1,-1,-1,-1,
-     -1,-1, 1,-1,-1,-1,-1,-1,
-     -1,-1, 1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,1,-1,-1,
-     -1,-1,-1,-1,0,0,-1,-1,
-     -1,-1,-1,-1,0,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1],
-    # level 2
-    [-1,-1,-1, 1,-1,-1,-1,-1,
-     -1,-1, 1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-
-     -1,-1,-1, 1,-1,-1,-1,-1,
-     -1,-1, 1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1],
-    # level 3
-    [-1,-1,-1, 1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-
-     -1,-1,-1, 1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1],
-    # objects
-    [0,-1,-1,-1,-1,-1,-1,-1,
-     -1,0,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1, 0,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-      1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-
-     0,-1,-1,-1,-1,-1,-1,-1,
-     -1,0,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1, 0,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1,
-     -1,-1,-1,-1,-1,-1,-1,-1],
-    ]
 tile_size = 80
-map_size = [8,16]
+map_size = [16,16]
 ISO_RATIO = 2
 class MainGame:
     def __init__(self,size):
@@ -124,17 +32,26 @@ class MainGame:
         self.canvas = pygame.Surface(self.size)
         # Set Background to White
         self.canvas.fill((250,250,250))
+        f = open('maps/testmap001.map','r')
+        demo_map = pickle.load(f)
+        f.close()
         self.maps=[map_structs.Map(map_size,demo_map,ISO_RATIO,tile_size)]
         self.cursor = map_structs.Cursor((0,250,0),tile_size,2,
                 [demo_map[1],map_size])
-        self.actors=[character_structs.Actor('characters/Knight5M-SW.gif'),character_structs.Actor('mario.png')]
+        self.actors=[character_structs.Actor('characters/Knight5M-SW.gif',{'hp':15,'mp':8,'speed':2}),character_structs.Actor('mario.png',{'hp':12,'mp':10,'speed':1})]
 
         self.menus=[menu_structs.Menu_Move()]
 
     def run(self):
             # Keep Track of current player
-            current_actor = 0
+            turn_list=[]
             while 1:
+                 # Create Turn List
+                if turn_list==[]:
+                    turn_list = utils.sort_actors(self.actors)
+                    [self.cursor.pos[0],self.cursor.pos[1]]=self.actors[turn_list[0]].pos
+                    for actor in self.actors:
+                        actor.NewTurn()
                 self.clock.tick(60)
             
                 for event in pygame.event.get():
@@ -149,16 +66,17 @@ class MainGame:
                         if event.key==K_UP:
                             self.cursor.Move('up')
                         if event.key==K_a:
-                            [self.cursor.pos[0],self.cursor.pos[1]]=self.actors[current_actor].pos
+                            [self.cursor.pos[0],self.cursor.pos[1]]=self.actors[turn_list[0]].pos
                         if event.key==K_SPACE:
                             for actor in self.actors:
                                 if self.cursor.pos==actor.pos:
-                                    if actor==self.actors[current_actor]:
+                                    if actor==self.actors[turn_list[0]]:
                                         #menu_structs.Menu_Move().Activate(actor,self.canvas,self.screen,self.maps[0],self.cursor,self.actors)
                                         if menu_structs.Player_Turn().Activate(actor,self.canvas,self.screen,
                                                                                 self.maps[0],self.cursor,self.actors)==1:
-                                            current_actor=(current_actor+1)%len(self.actors)
-                                            [self.cursor.pos[0],self.cursor.pos[1]]=self.actors[current_actor].pos
+                                            turn_list.remove(turn_list[0])
+                                            try: [self.cursor.pos[0],self.cursor.pos[1]]=self.actors[turn_list[0]].pos
+                                            except IndexError: pass
                                         break
                            
                 self.canvas.fill((0,0,0))

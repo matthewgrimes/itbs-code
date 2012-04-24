@@ -10,6 +10,7 @@ try:
     import getopt
     import pygame
     import utils
+    import pickle
     from socket import *
     from pygame.locals import *
     import map_editor_structs
@@ -121,7 +122,7 @@ tile_size = 80
 map_size = [16,16]
 ISO_RATIO = 2
 class MainGame:
-    def __init__(self,size):
+    def __init__(self,size,input_map=0):
         # Generate Empty Map
         self.empty_map=[5]
         for lev in range(0,5+1):
@@ -130,6 +131,10 @@ class MainGame:
                 for i in range(0,map_size[0]):
                     level.append(-1)
             self.empty_map.append(level)
+        if input_map!=0:
+            f = open(input_map,'r')
+            self.empty_map = pickle.load(f)
+            f.close()
         self.size = size
         pygame.init()
         self.clock = pygame.time.Clock()
@@ -173,12 +178,9 @@ class MainGame:
                             self.maps[0].layout[self.maps[0].active_level][self.cursor.pos[0]+16*self.cursor.pos[1]]=self.current_tile
                         if event.key==K_s:
                             #print self.maps[0].layout
-                            print '['
-                            for level in range(0,7):
-                                print self.maps[0].layout[level]
-                                print ','
-
-                            print ']'
+                            f = open('new.map','w')
+                            pickle.dump(self.maps[0].layout,f)
+                            f.close()
                         if event.key==K_SLASH:
                             self.maps[0].layout[-1][self.cursor.pos[0]+16*self.cursor.pos[1]]=self.current_object
                         if event.key==K_BACKSPACE:
@@ -207,5 +209,10 @@ class MainGame:
 
 
 if __name__ == '__main__':
-    game = MainGame((800,450))
+    if len(sys.argv)<=1:
+        game = MainGame((800,450))
+    elif len(sys.argv)>1:
+        game = MainGame((800,450),str(sys.argv[1]))
+    print str(sys.argv[0])
     game.run()
+

@@ -40,6 +40,7 @@ class YN_Prompt(Menu):
 
         
         while 1:
+            #canvas = background
             for event in pygame.event.get():
                 if event.type==KEYDOWN:
                     if event.key==K_ESCAPE:
@@ -48,15 +49,13 @@ class YN_Prompt(Menu):
                         self.option=(self.option+1)%len(self.options)
                     if event.key==K_UP:
                         self.option=(self.option-1)%len(self.options)
-                        while self.available_options[self.option]==0:
-                            self.option=(self.option-1)%len(self.options)
 
                     if event.key==K_SPACE:
                         if self.option==0: return 1
                         else: return 0
 
-            canvas.fill((0,0,0))
-            current_map.Draw(canvas,[cursor],actors)
+            #current_map.Draw(canvas,[cursor],actors)
+            canvas.blit(background,(0,0)) 
             self.Draw(canvas)
             screen.blit(canvas,[0,0])
             pygame.display.flip()
@@ -165,6 +164,7 @@ class Player_Turn:
 
 
     def Activate(self,actor,canvas,screen,current_map,cursor,actors):
+        actor.Display_Info(canvas)
         self.active = 1
 #       Slide the Menu onto the screen
         background = canvas
@@ -211,6 +211,7 @@ class Player_Turn:
 
             canvas.fill((0,0,0))
             current_map.Draw(canvas,[cursor],actors)
+            actor.Display_Info(canvas)
             self.Draw(canvas,self.pos)
             screen.blit(canvas,[0,0])
             pygame.display.flip()
@@ -223,6 +224,9 @@ class Player_Turn:
 class Player_Attack(Menu):
 
     def Activate(self,actor,canvas,screen,current_map,cursor,actors):
+        actor_positions = []
+        for a in actors:
+            actor_positions.append(a.pos)
         OpenList = [actor.pos]
         cursors = [cursor]
         openList = utils.draw_circle(actor,current_map,actors,1,1)
@@ -253,7 +257,7 @@ class Player_Attack(Menu):
                         for a in actors:
                             if a.pos==cursors[-1].pos and a!=actor:
                                 if YN_Prompt().Activate(canvas,screen,current_map,cursor,actors)==1:
-                                    actors.remove(a)
+                                    actors[actors.index(a)].character.current_hp-=2
                                     actor.attacked = 1
                                     self.active = 0
                                     return 1
@@ -269,6 +273,9 @@ class Player_Attack(Menu):
 
             canvas.fill((0,0,0))
             current_map.Draw(canvas,cursors,actors)
+            actor.Display_Info(canvas)
+            if cursors[-1].pos in actor_positions:
+                actors[actor_positions.index(cursors[-1].pos)].Display_Info(canvas,[800,300],1)
             screen.blit(canvas,[0,0])
             pygame.display.flip()
 

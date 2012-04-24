@@ -91,7 +91,7 @@ class Map:
 
 
     def Draw(self,surface,cursors,actors):
-        self.Update(cursors[0])
+        self.Update(cursors[-1])
         width = surface.get_width()
         height = surface.get_height()
         tile_size = self.tile_size
@@ -193,9 +193,12 @@ class Cursor:
             self.pos[1]-=1
             if self.pos[1]%2==0:
                 self.pos[0]+=1
-        if self.pos[0] + self.layout[1][0]*self.pos[1] > len(self.layout[0]) or self.pos[0]>=self.layout[1][0] or self.pos[1]>=self.layout[1][1]: self.pos = [old_pos_x,old_pos_y]
-        elif self.pos[0]<0 or self.pos[1]<0: self.pos=[old_pos_x,old_pos_y]
-        elif self.layout[0][self.pos[0] + self.layout[1][0]*self.pos[1]]==-1: self.pos = [old_pos_x,old_pos_y]
+        if self.pos[0] + self.layout[1][0]*self.pos[1] > len(self.layout[0]) or self.pos[0]>=self.layout[1][0] or self.pos[1]>=self.layout[1][1]: 
+            self.pos = [old_pos_x,old_pos_y]
+        elif self.pos[0]<0 or self.pos[1]<0: 
+            self.pos=[old_pos_x,old_pos_y]
+        elif self.layout[0][self.pos[0] + self.layout[1][0]*self.pos[1]]==-1:
+            self.pos = [old_pos_x,old_pos_y]
         
         
 class Blue_Cursor(Cursor):

@@ -47,7 +47,7 @@ def move_in_coords(pos,direction,layout):
 def check_for_water(current_map,pos):
     for level in range(1,current_map.layout[0]):
         try:
-            if current_map.layout[level][pos[0]+8*pos[1]]==2:
+            if current_map.layout[level][pos[0]+current_map.size[0]*pos[1]]==2:
                 return 1
         except IndexError:
             return 0
@@ -58,7 +58,7 @@ def top_level(current_map,loc):
     top = 0
     for level in range(1,current_map.layout[0]):
         try:
-            if current_map.layout[level][loc[0]+8*loc[1]]!=-1:
+            if current_map.layout[level][loc[0]+current_map.size[0]*loc[1]]!=-1:
                 top = level
         except IndexError:
             return 1
@@ -76,7 +76,7 @@ def draw_circle(actor,current_map,actors,radius,people_ok=0):
                 if check_for_water(current_map,node)==0:
                     if top_level(current_map,node)-top_level(current_map,parent)<= agility:
                         try:
-                            if current_map.layout[-1][node[0]+8*node[1]]==-1 and current_map.layout[1][node[0]+8*node[1]]!=-1:
+                            if current_map.layout[-1][node[0]+current_map.size[0]*node[1]]==-1 and current_map.layout[1][node[0]+current_map.size[0]*node[1]]!=-1:
                                 add=1
                                 for a in actors:
                                     if a.pos==node and people_ok==0:
@@ -94,4 +94,5 @@ def draw_circle(actor,current_map,actors,radius,people_ok=0):
     return openList
 
 
-
+def sort_actors(actors):
+    return [0,1]
