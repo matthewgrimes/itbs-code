@@ -84,6 +84,7 @@ class Menu_Move(Menu):
         self.active = 1
         choosing_facing = 0
         moving = 0
+        move_t=0
         while 1:
             if moving==1 and actor.mov_vector==[]:
                 moving = 0
@@ -91,6 +92,9 @@ class Menu_Move(Menu):
             elif moving==1:
                 [actor.pos[0],actor.pos[1]] = actor.mov_vector[0]
                 actor.mov_vector.remove(actor.mov_vector[0])
+                #actor.offset = [actor.pos[0]+move_t*(actor.mov_vector[0]-actor.pos[0]),
+                #                actor.pos[1]+move_t*(actor.mov_vector[1]-actor.pos[1])]
+                #move_t+=.1
             for event in pygame.event.get():
                 if event.type==KEYDOWN and not moving:
                     old_pos_x,old_pos_y = cursors[-1].pos

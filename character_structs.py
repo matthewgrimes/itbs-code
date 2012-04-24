@@ -53,6 +53,7 @@ class Actor:
         pygame.draw.circle(self.info,color,(width-height,height/2),height/2)
         self.info.set_colorkey((0,0,0))
         self.info.set_alpha(180)
+        self.offset=[0,0]
 
 
 
@@ -69,8 +70,8 @@ class Actor:
             self.animate_count = (self.animate_count+1)%4
             self.animate_timer=0
 
-        x = loc[0]+tile_width/2-self.images[0].get_width()/2+tile_width/2*(self.pos[1]%2)
-        y = loc[1]-tile_height/2*self.pos[1]-self.images[0].get_height()+10
+        x = loc[0]+tile_width/2-self.images[0].get_width()/2+tile_width/2*(self.pos[1]%2)+self.offset[0]
+        y = loc[1]-tile_height/2*self.pos[1]-self.images[0].get_height()+10+self.offset[1]
         surface.blit(pygame.transform.flip(self.images[self.animate_order[self.animate_count]+3*(self.facing[0]=='n')],(self.facing=='ne' or self.facing=='se'),0),[x,y])
 
     def Move(self,new_pos,ancestry):
