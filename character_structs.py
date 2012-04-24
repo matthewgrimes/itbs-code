@@ -80,9 +80,7 @@ class Actor:
             for i in range(0,len(ancestry)):
                 if ancestry[i][0]==self.mov_vector[0]:
                     self.mov_vector.insert(0,ancestry[i][1])
-                    print self.mov_vector
                     break
-            print self.mov_vector
 
 
     def Display_Info(self,canvas,loc=[0,300],mirrored=0):
