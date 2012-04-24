@@ -85,10 +85,7 @@ def draw_circle(actor,current_map,actors,radius,people_ok=0):
                                         add = 0
                                 if add==1: 
                                     childList.append(node)
-<<<<<<< HEAD
                                     ancestry.append([node,parent])
-=======
->>>>>>> make_characters_walk
                         except IndexError:
                             pass
         for parent in parentList:
