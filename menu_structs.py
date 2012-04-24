@@ -101,10 +101,12 @@ class Menu_Move(Menu):
                         actor.facing =  utils.get_direction(actor.pos,actor.mov_vector[0])
                         if actor.facing[0]=='s':
                             [actor.pos[0],actor.pos[1]] = actor.mov_vector[0]
+                            actor.level = utils.top_level(current_map,actor.mov_vector[0])
                             actor.mov_vector.remove(actor.mov_vector[0])
                             move_t=20
                         elif update_position==1:
                             [actor.pos[0],actor.pos[1]] = actor.mov_vector[0]
+                            actor.level = utils.top_level(current_map,actor.mov_vector[0])
                             actor.mov_vector.remove(actor.mov_vector[0])
                             actor.offset = [0,0]
                             update_position = 0
