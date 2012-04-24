@@ -83,16 +83,16 @@ class Map:
         x = x+self.tile_size/2*(cursor.pos[1]%2)
         y = y-self.tile_size/(2*self.ratio)*(cursor.pos[1]+1)
 
-        if x<0:
-            self.pos[0] = self.pos[0] + self.tile_size
+        if x<0 + self.tile_size:
+            self.pos[0]+=self.tile_size/10
         if y<0 + self.tile_size:
-            self.pos[1] = self.pos[1] + self.tile_size
+            self.pos[1]+=self.tile_size/10
 
         if x>800-self.tile_size*2:
-            self.pos[0] = self.pos[0] - self.tile_size
+            self.pos[0]-=self.tile_size/10
 
         if y>450-self.tile_size/2:
-            self.pos[1] = self.pos[1] - self.tile_size
+            self.pos[1]-=self.tile_size/10
         
         for tile in self.tiles:
             tile.Update()

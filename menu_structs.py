@@ -65,7 +65,6 @@ class YN_Prompt(Menu):
 class Menu_Move(Menu):
 
     def Activate(self,actor,canvas,screen,current_map,cursor,actors):
-        AGILITY = 1
         OpenList = [actor.pos]
         cursors = [cursor]
         openList,ancestry = utils.draw_circle(actor,current_map,actors,3)
