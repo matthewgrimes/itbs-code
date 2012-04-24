@@ -81,7 +81,8 @@ def draw_circle(actor,current_map,actors,radius,people_ok=0):
                                 for a in actors:
                                     if a.pos==node and people_ok==0:
                                         add = 0
-                                if add==1: childList.append(node)
+                                if add==1: 
+                                    childList.append(node)
                         except IndexError:
                             pass
         for node in childList:
