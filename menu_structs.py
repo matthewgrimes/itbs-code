@@ -83,36 +83,49 @@ class Menu_Move(Menu):
 #                openList.append(cursor.pos)
 
         self.active = 1
+        choosing_facing = 0
+        moving = 0
         while 1:
+            if moving==1 and actor.mov_vector==[]:
+                moving = 0
+                choosing_facing = 1
             for event in pygame.event.get():
-                if event.type==KEYDOWN:
+                if event.type==KEYDOWN and not moving:
                     old_pos_x,old_pos_y = cursors[-1].pos
                     if event.key==K_ESCAPE:
                         self.active = 0
                         return 0
                     if event.key==K_SPACE:
-                        if YN_Prompt().Activate(canvas,screen,current_map,cursor,actors)==1:
-                            [actor.pos[0],actor.pos[1]] = cursors[-1].pos
-                            actor.level = 1
-                        # Get Appropriate Level
-                            for level in range(1,current_map.layout[0]):
-                                if current_map.layout[level+1][actor.pos[0]+8*actor.pos[1]]!=-1:
-                                    actor.level+=1
-                            actor.moved = 1
-                            self.active = 0
+                        if not choosing_facing:
+                            if YN_Prompt().Activate(canvas,screen,current_map,cursor,actors)==1:
+                                [actor.pos[0],actor.pos[1]] = cursors[-1].pos
+                                actor.level = 1
+                                # Get Appropriate Level
+                                for level in range(1,current_map.layout[0]):
+                                    if current_map.layout[level+1][actor.pos[0]+current_map.size[0]*actor.pos[1]]!=-1:
+                                        actor.level+=1
+                                actor.moved = 1
+                                moving = 1
+                        else:
                             return 1
                     if event.key==K_RIGHT:
-                        cursors[-1].Move('right')
+                        if choosing_facing: actor.facing = 'se'
+                        else: cursors[-1].Move('right')
                     if event.key==K_LEFT:
-                        cursors[-1].Move('left')
+                        if choosing_facing: actor.facing = 'nw'
+                        else: cursors[-1].Move('left')
                     if event.key==K_DOWN:
-                        cursors[-1].Move('down')
+                        if choosing_facing: actor.facing = 'sw'
+                        else: cursors[-1].Move('down')
                     if event.key==K_UP:
-                        cursors[-1].Move('up')
+                        if choosing_facing: actor.facing = 'ne'
+                        else: cursors[-1].Move('up')
                     if cursors[-1].pos not in openList: cursors[-1].pos = [old_pos_x,old_pos_y]
 
             canvas.fill((0,0,0))
-            current_map.Draw(canvas,cursors,actors)
+            if (not moving) and (not choosing_facing): current_map.Draw(canvas,cursors,actors)
+            elif not moving: current_map.Draw(canvas,[cursors[-1]],actors)
+            else: current_map.Draw(canvas,[cursors[-1]],actors)
             screen.blit(canvas,[0,0])
             pygame.display.flip()
 

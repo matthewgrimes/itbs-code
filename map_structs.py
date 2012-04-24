@@ -1,4 +1,4 @@
-import pygame, sys, random, itertools, math
+import pygame, sys, random, itertools, math, pickle
 from pygame.locals import *
 from utils import load_image
 class Tile:
@@ -12,11 +12,13 @@ class Tile:
                 self.images.append(im)
                 self.rects.append(rect)
                 self.images[i].set_alpha(180)
+                self.images[i]=self.images[i].convert_alpha()
             self.image_count = 0
             self.animate_count = 0
             self.image = self.images[0]
         else:
             self.image,self.rect = load_image(image,-1)
+            self.image = self.image.convert()
 
         self.sides = [pygame.Surface((40,40))]
         if water==0:
@@ -47,6 +49,7 @@ class Tile:
 class Object:
     def __init__(self, image):
         self.image,self.rect = load_image(image,-1)
+        self.image = self.image.convert()
 
     def Draw(self,surface,loc):
         x=loc[0]
@@ -57,7 +60,12 @@ class Map:
     def __init__(self, size,layout,ratio,tile_size):
         self.size = size
         self.layout = layout
-        self.tiles = [Tile('cobblestone.png'),Tile('grass.png'),Tile('water',1),Tile('dungeon.png')]
+        tile_list = pickle.load(open('data/tile_list.li','r'))
+        #self.tiles = [Tile('cobblestone.png'),Tile('grass.png'),Tile('water',1),Tile('dungeon.png')]
+        self.tiles = []
+        for tile in tile_list:
+            if str(tile)!='water': self.tiles.append(Tile(str(tile)+'.png'))
+            else: self.tiles.append(Tile('water',1))
         self.objects = [Object('tree.png'),Object('log.png')]
         self.ratio = ratio
         self.tile_size = tile_size

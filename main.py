@@ -38,7 +38,10 @@ class MainGame:
         self.maps=[map_structs.Map(map_size,demo_map,ISO_RATIO,tile_size)]
         self.cursor = map_structs.Cursor((0,250,0),tile_size,2,
                 [demo_map[1],map_size])
-        self.actors=[character_structs.Actor('characters/Knight5M-SW.gif',{'hp':15,'mp':8,'speed':2}),character_structs.Actor('mario.png',{'hp':12,'mp':10,'speed':1})]
+        self.actors=[#character_structs.Actor('characters/Knight5M-SW.gif',{'hp':15,'mp':8,'speed':2}),
+                character_structs.Actor('characters/assassin.png',{'hp':12,'mp':10,'speed':1}),
+                character_structs.Actor('characters/sniper.png',{'hp':12,'mp':10,'speed':1})
+                ]
 
         self.menus=[menu_structs.Menu_Move()]
 
@@ -70,14 +73,17 @@ class MainGame:
                         if event.key==K_SPACE:
                             for actor in self.actors:
                                 if self.cursor.pos==actor.pos:
-                                    if actor==self.actors[turn_list[0]]:
+                                    try:
+                                        if actor==self.actors[turn_list[0]]:
                                         #menu_structs.Menu_Move().Activate(actor,self.canvas,self.screen,self.maps[0],self.cursor,self.actors)
-                                        if menu_structs.Player_Turn().Activate(actor,self.canvas,self.screen,
+                                            if menu_structs.Player_Turn().Activate(actor,self.canvas,self.screen,
                                                                                 self.maps[0],self.cursor,self.actors)==1:
-                                            turn_list.remove(turn_list[0])
-                                            try: [self.cursor.pos[0],self.cursor.pos[1]]=self.actors[turn_list[0]].pos
-                                            except IndexError: pass
-                                        break
+                                                turn_list.remove(turn_list[0])
+                                                try: [self.cursor.pos[0],self.cursor.pos[1]]=self.actors[turn_list[0]].pos
+                                                except IndexError: pass
+                                            break
+                                    except IndexError: 
+                                        turn_list = []
                            
                 self.canvas.fill((0,0,0))
                 self.maps[0].Draw(self.canvas,[self.cursor],self.actors)

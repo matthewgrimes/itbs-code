@@ -95,4 +95,4 @@ def draw_circle(actor,current_map,actors,radius,people_ok=0):
 
 
 def sort_actors(actors):
-    return [0,1]
+    return range(0,len(actors))

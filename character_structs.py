@@ -11,7 +11,8 @@ class Character:
 
 class Actor:
     def __init__(self, image,stats):
-        self.image,self.rect = load_image(image,-1)
+        images,rects = load_image(image,-1)
+#        self.image,self.rect = load_image(image,-1)
         self.pos = [3,3]
         self.level = 1
         self.mov_vector=[]
@@ -21,6 +22,26 @@ class Actor:
         self.can_attack = 1
         self.character = Character(stats)
         self.font = pygame.font.Font(None, 30)
+        self.facing = 'se'
+        self.animate_count = 0
+        self.animate_order = [0,1,2,1]
+        self.animate_timer = 0
+        self.images=[]
+        rect = pygame.Rect(((0,0),(32,60)))
+        for j in range(0,2):
+            for i in range(0,3):
+                image = pygame.Surface((32,60))
+                image.fill((255,0,241))
+                image.blit(images,(0,0),rect.move([32*i,60*j]))
+
+                image.set_colorkey((255,0,241))
+                image = image.convert()
+                self.images.append(image)
+#        2
+#   3  
+#           1
+#     0
+#
 
 
 #       Displaying stats
@@ -43,10 +64,14 @@ class Actor:
     def Draw(self,surface,loc):
         tile_width = 80
         tile_height = 40
+        self.animate_timer+=1
+        if self.animate_timer==7:
+            self.animate_count = (self.animate_count+1)%4
+            self.animate_timer=0
 
-        x = loc[0]+tile_width/2-self.image.get_width()/2+tile_width/2*(self.pos[1]%2)
-        y = loc[1]-tile_height/2*self.pos[1]-self.image.get_height()+10
-        surface.blit(self.image,[x,y])
+        x = loc[0]+tile_width/2-self.images[0].get_width()/2+tile_width/2*(self.pos[1]%2)
+        y = loc[1]-tile_height/2*self.pos[1]-self.images[0].get_height()+10
+        surface.blit(pygame.transform.flip(self.images[self.animate_order[self.animate_count]+3*(self.facing[0]=='n')],(self.facing=='ne' or self.facing=='se'),0),[x,y])
 
     def Move(self):
         if self.mov_vector!=[]:
@@ -65,9 +90,9 @@ class Actor:
             loc[0] = loc[0]-self.info.get_width()
             canvas.blit(pygame.transform.flip(self.info,1,0),loc)
             text = self.font.render("HP:"+str(self.character.current_hp)+"/"+str(self.character.hp),1,(250,250,250))
-            canvas.blit(text, loc)
+            canvas.blit(text, [loc[0]+50,loc[1]])
             text = self.font.render("MP:"+str(self.character.current_mp)+"/"+str(self.character.mp),1,(250,250,250))
-            canvas.blit(text,[loc[0],loc[1]+20])
+            canvas.blit(text,[loc[0]+50,loc[1]+20])
 
 
 
