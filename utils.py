@@ -67,10 +67,12 @@ def top_level(current_map,loc):
 def draw_circle(actor,current_map,actors,radius,people_ok=0):
     agility = 1
     # Add center
-    openList=[actor.pos]
+    openList=[]
+    parentList = [actor.pos]
     childList=[]
+    ancestry=[]
     for i in range(0,radius):
-        for parent in openList:
+        for parent in parentList:
             for direction in ['up','down','left','right']:
                 node = move_in_coords(parent,direction,[current_map.layout,[8,16]])
                 if check_for_water(current_map,node)==0:
@@ -81,17 +83,23 @@ def draw_circle(actor,current_map,actors,radius,people_ok=0):
                                 for a in actors:
                                     if a.pos==node and people_ok==0:
                                         add = 0
-                                if add==1: childList.append(node)
+                                if add==1: 
+                                    childList.append(node)
+                                    ancestry.append([node,parent])
                         except IndexError:
                             pass
+        for parent in parentList:
+            openList.append(parent)
+
+        parentList=[]
         for node in childList:
-            openList.append(node)
+            parentList.append(node)
     output = openList
     openList = []
     for node in output:
         if node not in openList:
             openList.append(node)
-    return openList
+    return openList,ancestry
 
 
 def sort_actors(actors):

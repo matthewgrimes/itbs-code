@@ -73,10 +73,17 @@ class Actor:
         y = loc[1]-tile_height/2*self.pos[1]-self.images[0].get_height()+10
         surface.blit(pygame.transform.flip(self.images[self.animate_order[self.animate_count]+3*(self.facing[0]=='n')],(self.facing=='ne' or self.facing=='se'),0),[x,y])
 
-    def Move(self):
-        if self.mov_vector!=[]:
-            self.pos = self.mov_vector=[0]
-            self.mov_vector.remove(self.move_vector[0])
+    def Move(self,new_pos,ancestry):
+        self.mov_vector=[new_pos]
+        while self.mov_vector[0]!=self.pos :
+        #  Look for parent of oldest position
+            for i in range(0,len(ancestry)):
+                if ancestry[i][0]==self.mov_vector[0]:
+                    self.mov_vector.insert(0,ancestry[i][1])
+                    print self.mov_vector
+                    break
+            print self.mov_vector
+
 
     def Display_Info(self,canvas,loc=[0,300],mirrored=0):
         #print self.character.hp,self.character.mp,self.character.speed

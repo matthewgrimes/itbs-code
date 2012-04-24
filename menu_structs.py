@@ -68,7 +68,7 @@ class Menu_Move(Menu):
         AGILITY = 1
         OpenList = [actor.pos]
         cursors = [cursor]
-        openList = utils.draw_circle(actor,current_map,actors,3)
+        openList,ancestry = utils.draw_circle(actor,current_map,actors,3)
         for spot in openList:
             cursor = map_structs.Blue_Cursor(80,2,[])
             [cursor.pos[0],cursor.pos[1]] = spot
@@ -98,13 +98,14 @@ class Menu_Move(Menu):
                     if event.key==K_SPACE:
                         if not choosing_facing:
                             if YN_Prompt().Activate(canvas,screen,current_map,cursor,actors)==1:
-                                [actor.pos[0],actor.pos[1]] = cursors[-1].pos
-                                actor.level = 1
+                                #[actor.pos[0],actor.pos[1]] = cursors[-1].pos
+                                #actor.level = 1
                                 # Get Appropriate Level
-                                for level in range(1,current_map.layout[0]):
-                                    if current_map.layout[level+1][actor.pos[0]+current_map.size[0]*actor.pos[1]]!=-1:
-                                        actor.level+=1
+                                #for level in range(1,current_map.layout[0]):
+                                #    if current_map.layout[level+1][actor.pos[0]+current_map.size[0]*actor.pos[1]]!=-1:
+                                #        actor.level+=1
                                 actor.moved = 1
+                                actor.Move(cursors[-1].pos,ancestry)
                                 moving = 1
                         else:
                             return 1
@@ -242,7 +243,7 @@ class Player_Attack(Menu):
             actor_positions.append(a.pos)
         OpenList = [actor.pos]
         cursors = [cursor]
-        openList = utils.draw_circle(actor,current_map,actors,1,1)
+        openList,ancestry = utils.draw_circle(actor,current_map,actors,2,1)
                                                    #radius=1,people ok
         for spot in range(1,len(openList)):
             cursor = map_structs.Red_Cursor(80,2,[])
