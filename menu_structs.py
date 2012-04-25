@@ -320,17 +320,18 @@ class Player_Attack(Menu):
                                     self.active = 0
                                     return 1
                     if event.key==K_RIGHT:
+                        if cursors[-1].pos==actor.pos: actor.facing = 'se'
                         cursors[-1].Move('right')
-                        actor.facing = 'se'
                     if event.key==K_LEFT:
+                        if cursors[-1].pos==actor.pos: actor.facing = 'nw'
                         cursors[-1].Move('left')
                         actor.facing = 'nw'
                     if event.key==K_DOWN:
+                        if cursors[-1].pos==actor.pos: actor.facing = 'sw'
                         cursors[-1].Move('down')
-                        actor.facing = 'sw'
                     if event.key==K_UP:
+                        if cursors[-1].pos==actor.pos: actor.facing = 'ne'
                         cursors[-1].Move('up')
-                        actor.facing = 'ne'
                     if cursors[-1].pos not in openList: cursors[-1].pos = [old_pos_x,old_pos_y]
 
             canvas.fill((0,0,0))

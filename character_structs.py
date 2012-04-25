@@ -93,17 +93,21 @@ class Actor:
         #print self.character.hp,self.character.mp,self.character.speed
         if mirrored==0:
             canvas.blit(self.info,loc)
+            text = self.font.render(str(self.character.name),1,(250,250,250))
+            canvas.blit(text, [loc[0],loc[1]])
             text = self.font.render("HP:"+str(self.character.current_hp)+"/"+str(self.character.hp),1,(250,250,250))
-            canvas.blit(text, loc)
+            canvas.blit(text, [loc[0],loc[1]+20])
             text = self.font.render("MP:"+str(self.character.current_mp)+"/"+str(self.character.mp),1,(250,250,250))
-            canvas.blit(text,[loc[0],loc[1]+20])
+            canvas.blit(text,[loc[0],loc[1]+40])
         else:
             loc[0] = loc[0]-self.info.get_width()
             canvas.blit(pygame.transform.flip(self.info,1,0),loc)
-            text = self.font.render("HP:"+str(self.character.current_hp)+"/"+str(self.character.hp),1,(250,250,250))
+            text = self.font.render(str(self.character.name),1,(250,250,250))
             canvas.blit(text, [loc[0]+50,loc[1]])
+            text = self.font.render("HP:"+str(self.character.current_hp)+"/"+str(self.character.hp),1,(250,250,250))
+            canvas.blit(text, [loc[0]+50,loc[1]+20])
             text = self.font.render("MP:"+str(self.character.current_mp)+"/"+str(self.character.mp),1,(250,250,250))
-            canvas.blit(text,[loc[0]+50,loc[1]+20])
+            canvas.blit(text,[loc[0]+50,loc[1]+40])
 
 
 

@@ -99,9 +99,13 @@ class MainGame:
                                             break
                                     except IndexError: 
                                         turn_list = []
+                                    
                            
                 self.canvas.fill((0,0,0))
                 self.maps[0].Draw(self.canvas,[self.cursor],self.actors)
+                for actor in self.actors:
+                    if actor.pos==self.cursor.pos:
+                        actor.Display_Info(self.canvas)
                 text=pygame.font.Font(None,36).render('Turn '+str(turn),1,(250,250,250))
                 self.canvas.blit(text,(700,0))
                 self.screen.blit(self.canvas,[0,0])
