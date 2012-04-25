@@ -13,12 +13,12 @@ class Character:
         self.current_mp = 0
 
 class Actor:
-    def __init__(self, image,stats,team):
+    def __init__(self, image,stats,team,pos):
         images,rects = load_image(image,-1)
 #        self.image,self.rect = load_image(image,-1)
         self.team = team
-        self.pos = [3,5]
-        self.level = 1
+        self.pos = [pos[0],pos[1]]
+        self.level = pos[2]
         self.mov_vector=[]
         self.moved = 0
         self.attacked = 0

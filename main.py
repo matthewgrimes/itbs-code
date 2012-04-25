@@ -30,18 +30,30 @@ class MainGame:
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode(self.size)
         self.canvas = pygame.Surface(self.size)
+
+        # Load players
+        self.actors=[
+                character_structs.Actor('characters/assassin.png',{'name':'Assassin','hp':12,'mp':10,'speed':4,'agility':3},1,[5,3,1]),
+                character_structs.Actor('characters/sniper.png',{'hp':12,'mp':10,'speed':5,'agility':2,'name':'Sniper'},1,[3,4,2])
+                ]
+
         # Set Background to White
         self.canvas.fill((250,250,250))
+#       Load map
         f = open('maps/testmap003.map','r')
         demo_map = pickle.load(f)
         f.close()
+#       Load enemies
+        f = open('maps/testmap003.en','r')
+        enemies = pickle.load(f)
+        f.close()
+        for enemy in enemies:
+            self.actors.append(character_structs.Actor(enemy[0],enemy[1],enemy[2],enemy[3]))
+
+
         self.maps=[map_structs.Map(map_size,demo_map,ISO_RATIO,tile_size)]
         self.cursor = map_structs.Cursor((0,250,0),tile_size,2,
                 [demo_map[1],map_size])
-        self.actors=[#character_structs.Actor('characters/Knight5M-SW.gif',{'hp':15,'mp':8,'speed':2}),
-                character_structs.Actor('characters/assassin.png',{'name':'Assassin','hp':12,'mp':10,'speed':4,'agility':3},1),
-                character_structs.Actor('characters/sniper.png',{'hp':12,'mp':10,'speed':5,'agility':2,'name':'Sniper'},2)
-                ]
         self.actors[0].pos=[4,3]
 
         self.menus=[menu_structs.Menu_Move()]
