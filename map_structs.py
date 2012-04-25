@@ -7,11 +7,16 @@ class Tile:
         if water:
             self.images=[]
             self.rects=[]
-            for i in range(0,4):
-                im,rect = load_image(image+str(i)+'.png',-1)
+            image,rect = load_image('custom_water_still.png')
+            rect = pygame.Rect((0,0),(80,40))
+            for i in range(0,20):
+                im = pygame.Surface((80,40))
+                im.blit(image,(0,0),rect.move([40*i,20*i]))
+                pygame.draw.polygon(im,(0,0,0),((0,20),(0,0),(40,0)))
                 self.images.append(im)
                 self.rects.append(rect)
                 self.images[i].set_alpha(180)
+                self.images[i].set_colorkey((0,0,0))
                 self.images[i]=self.images[i].convert_alpha()
             self.image_count = 0
             self.animate_count = 0
@@ -43,7 +48,7 @@ class Tile:
             self.animate_count+=1
             if self.animate_count==5:
                 self.animate_count=0
-                self.image_count=(self.image_count+1)%4
+                self.image_count=(self.image_count+1)%len(self.images)
             self.image = self.images[self.image_count]
 
 class Object:
