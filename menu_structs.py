@@ -135,7 +135,7 @@ class Menu_Move(Menu):
             for event in pygame.event.get():
                 if event.type==KEYDOWN and not moving:
                     old_pos_x,old_pos_y = cursors[-1].pos
-                    if event.key==K_ESCAPE:
+                    if event.key==K_ESCAPE and not choosing_facing:
                         self.active = 0
                         return 0
                     if event.key==K_SPACE:
