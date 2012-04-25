@@ -32,7 +32,7 @@ class MainGame:
         self.canvas = pygame.Surface(self.size)
         # Set Background to White
         self.canvas.fill((250,250,250))
-        f = open('maps/testmap002.map','r')
+        f = open('maps/testmap003.map','r')
         demo_map = pickle.load(f)
         f.close()
         self.maps=[map_structs.Map(map_size,demo_map,ISO_RATIO,tile_size)]

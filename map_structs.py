@@ -40,6 +40,14 @@ class Tile:
         pygame.draw.polygon(self.sides[1],color_right,((0,0),(40,20),(40,40),(0,20)))
         self.sides[1].set_colorkey((0,0,0))
         self.sides[1].set_alpha(255-water*175)
+        if image=='grass.png':
+            self.sides[0],r=load_image('grass_left.png',-1)
+            self.sides[1],r=load_image('grass_right.png',-1)
+            self.sides[1] = pygame.transform.flip(self.sides[1],0,1)
+        elif image=='dirt.png':
+            self.sides[0],r=load_image('dirt_left.png',(155,155,155))
+            self.sides[1],r=load_image('dirt_right.png',-1)
+            self.sides[1] = pygame.transform.flip(self.sides[1],0,1)
 
     def Update(self):
         if self.water==0:
@@ -185,7 +193,7 @@ class Cursor:
 
     def Draw(self,surface,pos):
         self.flash_count=(self.flash_count+1)%140
-        self.surface.set_alpha(125+35*math.cos(self.flash_count*2*3.14159/140))
+        self.surface.set_alpha(75+55*math.cos(self.flash_count*2*3.14159/140))
         surface.blit(self.surface,pos)
 
     def Move(self,direction):
