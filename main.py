@@ -39,18 +39,21 @@ class MainGame:
         self.cursor = map_structs.Cursor((0,250,0),tile_size,2,
                 [demo_map[1],map_size])
         self.actors=[#character_structs.Actor('characters/Knight5M-SW.gif',{'hp':15,'mp':8,'speed':2}),
-                character_structs.Actor('characters/assassin.png',{'hp':12,'mp':10,'speed':4}),
-                character_structs.Actor('characters/sniper.png',{'hp':12,'mp':10,'speed':5})
+                character_structs.Actor('characters/assassin.png',{'name':'Assassin','hp':12,'mp':10,'speed':4,'agility':3},1),
+                character_structs.Actor('characters/sniper.png',{'hp':12,'mp':10,'speed':5,'agility':2,'name':'Sniper'},2)
                 ]
+        self.actors[0].pos=[4,3]
 
         self.menus=[menu_structs.Menu_Move()]
 
     def run(self):
+            turn = 0
             # Keep Track of current player
             turn_list=[]
             while 1:
                  # Create Turn List
                 if turn_list==[]:
+                    turn+=1
                     turn_list = utils.sort_actors(self.actors)
                     [self.cursor.pos[0],self.cursor.pos[1]]=self.actors[turn_list[0]].pos
                     for actor in self.actors:
@@ -87,6 +90,8 @@ class MainGame:
                            
                 self.canvas.fill((0,0,0))
                 self.maps[0].Draw(self.canvas,[self.cursor],self.actors)
+                text=pygame.font.Font(None,36).render('Turn '+str(turn),1,(250,250,250))
+                self.canvas.blit(text,(700,0))
                 self.screen.blit(self.canvas,[0,0])
                 pygame.display.flip()
 

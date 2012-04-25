@@ -1,18 +1,22 @@
 import pygame, sys, random, itertools,map_structs
 from pygame.locals import *
 from utils import load_image
+
 class Character:
     def __init__(self,stats):
+        self.name = stats['name']
         self.hp = stats['hp']
         self.mp = stats['mp']
         self.speed = stats['speed']
+        self.agility = stats['agility']
         self.current_hp = self.hp
         self.current_mp = 0
 
 class Actor:
-    def __init__(self, image,stats):
+    def __init__(self, image,stats,team):
         images,rects = load_image(image,-1)
 #        self.image,self.rect = load_image(image,-1)
+        self.team = team
         self.pos = [3,5]
         self.level = 1
         self.mov_vector=[]
@@ -47,7 +51,8 @@ class Actor:
 #       Displaying stats
         width = 400
         height = 150
-        color = (0,0,250)
+        if self.team==1: color = (0,0,250)
+        elif self.team==2: color = (250,0,0)
         self.info = pygame.Surface((width-height/2,height))
         pygame.draw.rect(self.info,color,(0,0,width-height,height))
         pygame.draw.circle(self.info,color,(width-height,height/2),height/2)

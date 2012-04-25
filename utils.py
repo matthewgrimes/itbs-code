@@ -65,7 +65,7 @@ def top_level(current_map,loc):
     return top
 
 def draw_circle(actor,current_map,actors,radius,people_ok=0):
-    agility = 1
+    agility = actor.character.agility
     # Add center
     openList=[]
     parentList = [actor.pos]
