@@ -1,4 +1,4 @@
-import pygame, sys, random, itertools,map_structs
+import pygame, sys, random, itertools,map_structs,utils
 from pygame.locals import *
 from utils import load_image
 
@@ -31,6 +31,9 @@ class Actor:
         self.animate_order = [0,1,2,1]
         self.animate_timer = 0
         self.images=[]
+        self.move_t=0
+        self.moving=0
+        self.update_position=0
         rect = pygame.Rect(((0,0),(32,60)))
         for j in range(0,2):
             for i in range(0,3):
@@ -79,7 +82,43 @@ class Actor:
         y = loc[1]-tile_height/2*self.pos[1]-self.images[0].get_height()+10+self.offset[1]
         surface.blit(pygame.transform.flip(self.images[self.animate_order[self.animate_count]+3*(self.facing[0]=='n')],(self.facing=='ne' or self.facing=='se'),0),[x,y])
 
-    def Move(self,new_pos,ancestry):
+    def Move(self,current_map):
+        self.move_t-=1
+        if self.move_t<0:
+            if self.mov_vector==[]:
+                self.moving = 0
+            else:
+                self.facing =  utils.get_direction(self.pos,self.mov_vector[0])
+                if self.facing[0]=='s':
+                    [self.pos[0],self.pos[1]] = self.mov_vector[0]
+                    self.level = utils.top_level(current_map,self.mov_vector[0])
+                    self.mov_vector.remove(self.mov_vector[0])
+                    self.move_t=20
+                elif self.update_position==1:
+                    [self.pos[0],self.pos[1]] = self.mov_vector[0]
+                    self.level = utils.top_level(current_map,self.mov_vector[0])
+                    self.mov_vector.remove(self.mov_vector[0])
+                    self.offset = [0,0]
+                    self.update_position = 0
+                else: 
+                    self.update_position = 1
+                    self.move_t=20
+                #self.offset=[0,0]
+        if self.facing == 'se':
+            self.offset[0] = -self.move_t*2
+            self.offset[1] = -self.move_t*1
+        elif self.facing == 'sw':
+            self.offset[0] = self.move_t*2
+            self.offset[1] = -self.move_t*1
+        elif self.facing== 'nw' and self.update_position==1:
+            self.offset[0] = self.move_t*2-40
+            self.offset[1] = self.move_t*1-20
+        elif self.facing == 'ne' and self.update_position==1:
+            self.offset[0] = -self.move_t*2+40
+            self.offset[1] = self.move_t*1-20
+
+
+    def Create_Move_Path(self,new_pos,ancestry):
         self.mov_vector=[new_pos]
         while self.mov_vector[0]!=self.pos :
         #  Look for parent of oldest position

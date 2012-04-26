@@ -32,19 +32,19 @@ class YN_Prompt(Menu):
         pygame.draw.circle(canvas,(0,250,0),[pos[0]+10,pos[1]+30+self.option*35],10)
 
 
-    def Activate(self,canvas,screen,current_map,cursor,actors):      
+    def Activate(self,actor,current_map,cursor,actors):      
         self.active = 1
 #       Slide the Menu onto the screen
-        background = canvas
         self.option = 0
 
         
-        while 1:
+    def Handle_Input(self,events):
+            print 'activating yn'
             #canvas = background
-            for event in pygame.event.get():
+            for event in events:
                 if event.type==KEYDOWN:
                     if event.key==K_ESCAPE:
-                        return 0
+                        self.active = 0    
                     if event.key==K_DOWN:
                         self.option=(self.option+1)%len(self.options)
                     if event.key==K_UP:
@@ -54,125 +54,53 @@ class YN_Prompt(Menu):
                         if self.option==0: return 1
                         else: return 0
 
-            #current_map.Draw(canvas,[cursor],actors)
-            canvas.blit(background,(0,0)) 
+    def Draw_Map(self,canvas,current_map,cursor,actors):
+            current_map.Draw(canvas,[cursor],actors)
             self.Draw(canvas)
-            screen.blit(canvas,[0,0])
-            pygame.display.flip()
 
 
 
 class Menu_Move(Menu):
 
-    def Activate(self,actor,canvas,screen,current_map,cursor,actors):
-        OpenList = [actor.pos]
-        cursors = [cursor]
-        openList,ancestry = utils.draw_circle(actor,current_map,actors,actor.character.speed)
-        for spot in openList:
+    def Activate(self,actor,current_map,cursor,actors):
+        self.cursors = [cursor]
+        self.openList,self.ancestry = utils.draw_circle(actor,current_map,actors,actor.character.speed)
+        for spot in self.openList:
             cursor = map_structs.Blue_Cursor(80,2,[])
             [cursor.pos[0],cursor.pos[1]] = spot
-            cursors.insert(0,cursor)
-#        for spot in ['up','down','left','right']:
-#            cursor = map_structs.Blue_Cursor(80,2,[])
-#            [cursor.pos[0],cursor.pos[1]]=cursors[-1].pos
-#            cursor.pos = utils.move_in_coords(cursor.pos,spot,
-#                [current_map.layout,[8,16]])
-#            if utils.check_for_water(current_map,cursor.pos)==0:
-#                cursors.insert(0,cursor)
-#                openList.append(cursor.pos)
-
+            self.cursors.insert(0,cursor)
         self.active = 1
-        choosing_facing = 0
-        moving = 0
-        move_t=0
-        update_position = 0
-        while 1:
-            #if moving==1 and actor.mov_vector==[]:
-                #moving = 0
-                #actor.offset=[0,0]
-                #choosing_facing = 1
-            if moving==1:
-                move_t-=1
-                if move_t<0:
-                    if actor.mov_vector==[]:
-                        moving = 0
-                        choosing_facing = 1
-                    else:
-                        actor.facing =  utils.get_direction(actor.pos,actor.mov_vector[0])
-                        if actor.facing[0]=='s':
-                            [actor.pos[0],actor.pos[1]] = actor.mov_vector[0]
-                            actor.level = utils.top_level(current_map,actor.mov_vector[0])
-                            actor.mov_vector.remove(actor.mov_vector[0])
-                            move_t=20
-                        elif update_position==1:
-                            [actor.pos[0],actor.pos[1]] = actor.mov_vector[0]
-                            actor.level = utils.top_level(current_map,actor.mov_vector[0])
-                            actor.mov_vector.remove(actor.mov_vector[0])
-                            actor.offset = [0,0]
-                            update_position = 0
-                        else: 
-                            update_position = 1
-                            move_t=20
-                    #actor.offset=[0,0]
-                if actor.facing == 'se':
-                    actor.offset[0] = -move_t*2
-                    actor.offset[1] = -move_t*1
-                elif actor.facing == 'sw':
-                    actor.offset[0] = move_t*2
-                    actor.offset[1] = -move_t*1
-                elif actor.facing== 'nw' and update_position==1:
-                    actor.offset[0] = move_t*2-40
-                    actor.offset[1] = move_t*1-20
-                elif actor.facing == 'ne' and update_position==1:
-                    actor.offset[0] = -move_t*2+40
-                    actor.offset[1] = move_t*1-20
+        self.actor = actor
 
+    def Handle_Input(self,events):
+        for event in events:
+            if event.type==KEYDOWN and not self.actor.moving:
+                old_pos_x,old_pos_y = self.cursors[-1].pos
+                if event.key==K_ESCAPE:
+                    return ['turn']
+                    self.active = 0
+                if event.key==K_SPACE:
+                    #if YN_Prompt().Activate(canvas,screen,current_map,cursor,self.actors)==1:
 
-                
-                #actor.offset = [actor.pos[0]+move_t*(actor.mov_vector[0]-actor.pos[0]),
-                #                actor.pos[1]+move_t*(actor.mov_vector[1]-actor.pos[1])]
-                #move_t+=.1
-            for event in pygame.event.get():
-                if event.type==KEYDOWN and not moving:
-                    old_pos_x,old_pos_y = cursors[-1].pos
-                    if event.key==K_ESCAPE and not choosing_facing:
-                        self.active = 0
-                        return 0
-                    if event.key==K_SPACE:
-                        if not choosing_facing:
-                            if YN_Prompt().Activate(canvas,screen,current_map,cursor,actors)==1:
-                                #[actor.pos[0],actor.pos[1]] = cursors[-1].pos
-                                #actor.level = 1
-                                # Get Appropriate Level
-                                #for level in range(1,current_map.layout[0]):
-                                #    if current_map.layout[level+1][actor.pos[0]+current_map.size[0]*actor.pos[1]]!=-1:
-                                #        actor.level+=1
-                                actor.moved = 1
-                                actor.Move(cursors[-1].pos,ancestry)
-                                actor.mov_vector.remove(actor.mov_vector[0])
-                                moving = 1
-                        else:
-                            return 1
-                    if event.key==K_RIGHT:
-                        if choosing_facing: actor.facing = 'se'
-                        else: cursors[-1].Move('right')
-                    if event.key==K_LEFT:
-                        if choosing_facing: actor.facing = 'nw'
-                        else: cursors[-1].Move('left')
-                    if event.key==K_DOWN:
-                        if choosing_facing: actor.facing = 'sw'
-                        else: cursors[-1].Move('down')
-                    if event.key==K_UP:
-                        if choosing_facing: actor.facing = 'ne'
-                        else: cursors[-1].Move('up')
-                    if cursors[-1].pos not in openList: cursors[-1].pos = [old_pos_x,old_pos_y]
+                    self.actor.moved = 1
+                    self.actor.Create_Move_Path(self.cursors[-1].pos,self.ancestry)
+                    self.actor.mov_vector.remove(self.actor.mov_vector[0])
+                    self.actor.moving = 1
+                    self.active = 0
+                    return ['turn']
+                if event.key==K_RIGHT:
+                    self.cursors[-1].Move('right')
+                if event.key==K_LEFT:
+                    self.cursors[-1].Move('left')
+                if event.key==K_DOWN:
+                    self.cursors[-1].Move('down')
+                if event.key==K_UP:
+                    self.cursors[-1].Move('up')
+                if self.cursors[-1].pos not in self.openList: self.cursors[-1].pos = [old_pos_x,old_pos_y]
 
-            canvas.fill((0,0,0))
-            if (not moving) and (not choosing_facing): current_map.Draw(canvas,cursors,actors)
-            elif not moving: current_map.Draw(canvas,[cursors[-1]],actors)
-            else: current_map.Draw(canvas,[cursors[-1]],actors)
-            screen.blit(canvas,[0,0])
-            pygame.display.flip()
+    def Draw_Map(self,canvas,current_map,cursor,actors):
+            if self.actor.moving: current_map.Draw(canvas,[self.cursors[-1]],actors)
+            else: current_map.Draw(canvas,self.cursors,actors)
 
 class Player_Turn:
     def __init__(self):
@@ -221,124 +149,104 @@ class Player_Turn:
             pygame.display.flip()
 
 
-    def Activate(self,actor,canvas,screen,current_map,cursor,actors):
-        actor.Display_Info(canvas)
+    def Activate(self,actor,current_map,cursor,actors):
         self.active = 1
-#       Slide the Menu onto the screen
-        background = canvas
         self.available_options=[(not actor.moved) and actor.can_move,
                 (not actor.attacked) and actor.can_attack,1,1]
         self.option = 0
-        while self.available_options[self.option]==0:
-            self.option = (self.option+1)%len(self.options)
-
-        self.Show(canvas,screen)
         
-        while 1:
-            for event in pygame.event.get():
-                if event.type==KEYDOWN:
-                    if event.key==K_ESCAPE:
-                        return
-                    if event.key==K_DOWN:
+    def Handle_Input(self,events):
+        for event in events:
+            if event.type==KEYDOWN:
+                if event.key==K_ESCAPE:
+                    self.active = 0
+                    return ['back']
+                if event.key==K_DOWN:
+                    self.option=(self.option+1)%len(self.options)
+                    while self.available_options[self.option]==0:
                         self.option=(self.option+1)%len(self.options)
-                        while self.available_options[self.option]==0:
-                            self.option=(self.option+1)%len(self.options)
-                    if event.key==K_UP:
+                if event.key==K_UP:
+                    self.option=(self.option-1)%len(self.options)
+                    while self.available_options[self.option]==0:
                         self.option=(self.option-1)%len(self.options)
-                        while self.available_options[self.option]==0:
-                            self.option=(self.option-1)%len(self.options)
 
-                    if event.key==K_SPACE:
-                        if self.option==0:
-                            if Menu_Move().Activate(actor,canvas,screen,current_map,cursor,actors)==1:
-                                self.available_options[0]=0
-                                self.option+=1
-                            self.Show(canvas,screen)
+                if event.key==K_SPACE:
+                    if self.option==0:
+                        #if Menu_Move().Activate(self,canvas,screen,current_map,cursor,actors)==1:
+                        self.available_options[0]=0
+                        self.option+=1
+                        self.active = 0
+                        return ['move']
+                        #self.Show(canvas,screen)
 
-                        elif self.option==1:
-                            if Player_Attack().Activate(actor,canvas,screen,current_map,cursor,actors)==1:
-                                self.available_options[1]=0
-                                self.option+=1
+                    elif self.option==1:
+                            self.available_options[1]=0
+                            self.option+=1
+                            self.active = 0
+                            return ['attack']
 
-                        elif self.option==2:
-                                return 1
-                        elif self.option==3:
-                            return 0
-
-
-
-            canvas.fill((0,0,0))
-            current_map.Draw(canvas,[cursor],actors)
-            actor.Display_Info(canvas)
-            self.Draw(canvas,self.pos)
-            screen.blit(canvas,[0,0])
-            pygame.display.flip()
-
-    
-        #Menu_Move().Activate(actor,canvas,screen,current_map,cursor,actors)
+                    elif self.option==2:
+                        self.active = 0
+                        return ['done_with_turn']
+                    elif self.option==3:
+                        self.active = 0
+                        return ['back']
+            else: return []
 
 
+    def Draw_Map(self,canvas,current_map,cursor,actors):
+        current_map.Draw(canvas,[cursor],actors)
+        self.Draw(canvas,self.pos)
 
 class Player_Attack(Menu):
 
-    def Activate(self,actor,canvas,screen,current_map,cursor,actors):
-        actor_positions = []
+    def Activate(self,actor,current_map,cursor,actors):
+        self.actor = actor
+        self.actors = actors
+        self.actor_positions = []
         for a in actors:
-            actor_positions.append(a.pos)
-        OpenList = [actor.pos]
-        cursors = [cursor]
-        openList,ancestry = utils.draw_circle(actor,current_map,actors,2,1)
+            self.actor_positions.append(a.pos)
+        self.cursors = [cursor]
+        self.openList,self.ancestry = utils.draw_circle(actor,current_map,actors,2,1)
                                                    #radius=1,people ok
-        for spot in range(1,len(openList)):
+        for spot in range(1,len(self.openList)):
             cursor = map_structs.Red_Cursor(80,2,[])
-            [cursor.pos[0],cursor.pos[1]] = openList[spot]
-            cursors.insert(0,cursor)
-#        for spot in ['up','down','left','right']:
-#            cursor = map_structs.Blue_Cursor(80,2,[])
-#            [cursor.pos[0],cursor.pos[1]]=cursors[-1].pos
-#            cursor.pos = utils.move_in_coords(cursor.pos,spot,
-#                [current_map.layout,[8,16]])
-#            if utils.check_for_water(current_map,cursor.pos)==0:
-#                cursors.insert(0,cursor)
-#                openList.append(cursor.pos)
+            [cursor.pos[0],cursor.pos[1]] = self.openList[spot]
+            self.cursors.insert(0,cursor)
 
         self.active = 1
-        while 1:
-            for event in pygame.event.get():
+    def Handle_Input(self,events):
+            for event in events:
                 if event.type==KEYDOWN:
-                    old_pos_x,old_pos_y = cursors[-1].pos
+                    old_pos_x,old_pos_y = self.cursors[-1].pos
                     if event.key==K_ESCAPE:
                         self.active = 0
-                        return 0
+                        return ['turn']
                     if event.key==K_SPACE:
                         # Get Target
-                        for a in actors:
-                            if a.pos==cursors[-1].pos and a!=actor:
-                                if YN_Prompt().Activate(canvas,screen,current_map,cursor,actors)==1:
-                                    actors[actors.index(a)].character.current_hp-=2
-                                    actor.attacked = 1
+                        for a in self.actors:
+                            if a.pos==self.cursors[-1].pos and a!=self.actor:
+                                    self.actors[self.actors.index(a)].character.current_hp-=2
+                                    self.actor.attacked = 1
                                     self.active = 0
-                                    return 1
+                                    return ['turn']
                     if event.key==K_RIGHT:
-                        if cursors[-1].pos==actor.pos: actor.facing = 'se'
-                        cursors[-1].Move('right')
+                        if self.cursors[-1].pos==self.actor.pos: self.actor.facing = 'se'
+                        self.cursors[-1].Move('right')
                     if event.key==K_LEFT:
-                        if cursors[-1].pos==actor.pos: actor.facing = 'nw'
-                        cursors[-1].Move('left')
-                        actor.facing = 'nw'
+                        if self.cursors[-1].pos==self.actor.pos: self.actor.facing = 'nw'
+                        self.cursors[-1].Move('left')
                     if event.key==K_DOWN:
-                        if cursors[-1].pos==actor.pos: actor.facing = 'sw'
-                        cursors[-1].Move('down')
+                        if self.cursors[-1].pos==self.actor.pos: self.actor.facing = 'sw'
+                        self.cursors[-1].Move('down')
                     if event.key==K_UP:
-                        if cursors[-1].pos==actor.pos: actor.facing = 'ne'
-                        cursors[-1].Move('up')
-                    if cursors[-1].pos not in openList: cursors[-1].pos = [old_pos_x,old_pos_y]
+                        if self.cursors[-1].pos==self.actor.pos: self.actor.facing = 'ne'
+                        self.cursors[-1].Move('up')
+                    if self.cursors[-1].pos not in self.openList: self.cursors[-1].pos = [old_pos_x,old_pos_y]
 
-            canvas.fill((0,0,0))
-            current_map.Draw(canvas,cursors,actors)
-            actor.Display_Info(canvas)
-            if cursors[-1].pos in actor_positions:
-                actors[actor_positions.index(cursors[-1].pos)].Display_Info(canvas,[800,300],1)
-            screen.blit(canvas,[0,0])
-            pygame.display.flip()
+    def Draw_Map(self,canvas,current_map,cursor,actors):
+         current_map.Draw(canvas,self.cursors,actors)
+         self.actor.Display_Info(canvas)
+         if self.cursors[-1].pos in self.actor_positions:
+             actors[self.actor_positions.index(self.cursors[-1].pos)].Display_Info(canvas,[800,300],1)
 

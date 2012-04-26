@@ -23,7 +23,7 @@ except ImportError, err:
 tile_size = 80
 map_size = [16,16]
 ISO_RATIO = 2
-class MainGame:
+class OverLord:
     def __init__(self,size):
         self.size = size
         pygame.init()
@@ -59,10 +59,17 @@ class MainGame:
         self.menus=[menu_structs.Menu_Move()]
 
     def run(self):
+#           Initialize menus
+            self.menus = [menu_structs.Player_Turn(),menu_structs.Menu_Move(),menu_structs.Player_Attack(),menu_structs.YN_Prompt()]
+            next_step = []
             turn = 0
             # Keep Track of current player
             turn_list=[]
+            output=[]
+            HANDLE_INPUT_MYSELF = 1
             while 1:
+                print self.menus[0].active,turn_list,next_step
+                self.clock.tick(60)
                  # Create Turn List
                 if turn_list==[]:
                     turn+=1
@@ -70,39 +77,78 @@ class MainGame:
                     [self.cursor.pos[0],self.cursor.pos[1]]=self.actors[turn_list[0]].pos
                     for actor in self.actors:
                         actor.NewTurn()
-                self.clock.tick(60)
-            
-                for event in pygame.event.get():
-                    if event.type==KEYDOWN:
-                        if event.key==K_ESCAPE: sys.exit()
-                        if event.key==K_RIGHT:
-                            self.cursor.Move('right')
-                        if event.key==K_LEFT:
-                            self.cursor.Move('left')
-                        if event.key==K_DOWN:
-                            self.cursor.Move('down')
-                        if event.key==K_UP:
-                            self.cursor.Move('up')
-                        if event.key==K_a:
+                    [self.cursor.pos[0],self.cursor.pos[1]]=self.actors[turn_list[0]].pos
+                    self.menus[0].Activate(actor,self.maps[0],self.cursor,self.actors)
+                if next_step!=[]:
+                    if next_step[0]=='move':
+                        self.menus[1].Activate(self.actors[turn_list[0]],self.maps[0],self.cursor,self.actors)
+                        #print self.menus[1].active
+                    elif next_step[0]=='turn':
+                        self.menus[0].Activate(self.actors[turn_list[0]],self.maps[0],self.cursor,self.actors)
+                        print 'here'
+                    elif next_step[0]=='attack':
+                        self.menus[2].Activate(self.actors[turn_list[0]],self.maps[0],self.cursor,self.actors)
+                    elif next_step[0][0]=='y':
+                        self.menus[3].Activate(self.actors[turn_list[0]],self.maps[0],self.cursor,self.actors)
+                    elif next_step[0]=='done_with_turn':
+                        turn_list.remove(turn_list[0])
+                        try:
                             [self.cursor.pos[0],self.cursor.pos[1]]=self.actors[turn_list[0]].pos
-                        if event.key==K_SPACE:
-                            for actor in self.actors:
-                                if self.cursor.pos==actor.pos:
-                                    try:
-                                        if actor==self.actors[turn_list[0]]:
-                                        #menu_structs.Menu_Move().Activate(actor,self.canvas,self.screen,self.maps[0],self.cursor,self.actors)
-                                            if menu_structs.Player_Turn().Activate(actor,self.canvas,self.screen,
-                                                                                self.maps[0],self.cursor,self.actors)==1:
-                                                turn_list.remove(turn_list[0])
-                                                try: [self.cursor.pos[0],self.cursor.pos[1]]=self.actors[turn_list[0]].pos
-                                                except IndexError: pass
-                                            break
-                                    except IndexError: 
-                                        turn_list = []
-                                    
+                            print 'here2'
+                            self.menus[0].Activate(actor,self.maps[0],self.cursor,self.actors)
+                        except IndexError: pass
+                    elif next_step[0]=='back':
+                        HANDLE_INPUT_MYSELF = 1
+
+                    next_step.remove(next_step[0])
+                for menu in self.menus:
+                    if menu.active==1:
+                        HANDLE_INPUT_MYSELF = 0
+                        output = menu.Handle_Input(pygame.event.get())
+                        if output!=[] and output!=None:
+                            for out in output:
+                                next_step.append(out)
+                for actor in self.actors:
+                    if actor.moving==1:
+                        actor.Move(self.maps[0])
+                if HANDLE_INPUT_MYSELF==1: 
+                    for event in pygame.event.get():
+	                    if event.type==KEYDOWN:
+	                        if event.key==K_ESCAPE: sys.exit()
+	                        if event.key==K_RIGHT:
+	                            self.cursor.Move('right')
+	                        if event.key==K_LEFT:
+	                            self.cursor.Move('left')
+	                        if event.key==K_DOWN:
+	                            self.cursor.Move('down')
+	                        if event.key==K_UP:
+	                            self.cursor.Move('up')
+	                        if event.key==K_a:
+	                            [self.cursor.pos[0],self.cursor.pos[1]]=self.actors[turn_list[0]].pos
+                                print 'here3'
+                                self.menus[0].Activate(actor,self.maps[0],self.cursor,self.actors)
+	                        if event.key==K_SPACE:
+	                            for actor in self.actors:
+	                                if self.cursor.pos==actor.pos:
+	                                    try:
+	                                        if actor==self.actors[turn_list[0]]:
+	                                            self.menus[0].Activate(actor,self.maps[0],self.cursor,self.actors)
+                                                print 'here4'
+	                                    except IndexError: 
+	                                        turn_list = []
+	                                    
                            
                 self.canvas.fill((0,0,0))
-                self.maps[0].Draw(self.canvas,[self.cursor],self.actors)
+                if self.menus[0].active==1:
+                    self.menus[0].Draw_Map(self.canvas,self.maps[0],self.cursor,self.actors)
+                elif self.menus[1].active==1:
+                    self.menus[1].Draw_Map(self.canvas,self.maps[0],self.cursor,self.actors)
+                elif self.menus[2].active==1:
+                    self.menus[2].Draw_Map(self.canvas,self.maps[0],self.cursor,self.actors)
+                elif self.menus[3].active==1:
+                    self.menus[3].Draw_Map(self.canvas,self.maps[0],self.cursor,self.actors)
+                else: 
+                    self.maps[0].Draw(self.canvas,[self.cursor],self.actors)
                 for actor in self.actors:
                     if actor.pos==self.cursor.pos:
                         actor.Display_Info(self.canvas)
@@ -115,5 +161,5 @@ class MainGame:
 
 
 if __name__ == '__main__':
-    game = MainGame((800,450))
+    game = OverLord((800,450))
     game.run()
