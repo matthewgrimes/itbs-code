@@ -325,7 +325,6 @@ class Player_Attack(Menu):
                     if event.key==K_LEFT:
                         if cursors[-1].pos==actor.pos: actor.facing = 'nw'
                         cursors[-1].Move('left')
-                        actor.facing = 'nw'
                     if event.key==K_DOWN:
                         if cursors[-1].pos==actor.pos: actor.facing = 'sw'
                         cursors[-1].Move('down')

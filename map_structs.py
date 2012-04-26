@@ -189,12 +189,14 @@ class Cursor:
         #                                             (width-8,width/(2*ratio)),
         #                                             (width/2,width/ratio-5)))
         self.surface,self.rect = load_image('cursor.png',-1)
+        self.surface_head,self.rect_head = load_image('cursor_head.png',-1)
         
 
     def Draw(self,surface,pos):
         self.flash_count=(self.flash_count+1)%140
         self.surface.set_alpha(75+55*math.cos(self.flash_count*2*3.14159/140))
         surface.blit(self.surface,pos)
+        surface.blit(self.surface_head,[pos[0],pos[1]-75-5*math.cos(self.flash_count*2*3.14159/35)])
 
     def Move(self,direction):
         old_pos_x,old_pos_y = self.pos
@@ -228,6 +230,7 @@ class Blue_Cursor(Cursor):
         self.layout = layout
         self.flash_count = 0
         self.surface,self.rect = load_image('cursor_blue.png',-1)
+        self.surface_head=pygame.Surface((0,0))
 
 class Red_Cursor(Cursor):
     def __init__(self,width,ratio,layout):
@@ -235,4 +238,5 @@ class Red_Cursor(Cursor):
         self.layout = layout
         self.flash_count = 0
         self.surface,self.rect = load_image('cursor_red.png',-1)
+        self.surface_head=pygame.Surface((0,0))
 
