@@ -20,7 +20,7 @@ except ImportError, err:
     print "couldn't load module. %s" % (err)
     sys.exit(2)
 
-empty_map = [4, # number of levels
+empty_map = [8, # number of levels
     # level0
     [
    -1, -1, -1, -1, -1, -1, -1, -1,
@@ -119,7 +119,7 @@ empty_map = [4, # number of levels
    -1, -1, -1, -1, -1, -1, -1, -1],
     ]
 tile_size = 80
-map_size = [16,16]
+map_size = [16,26]
 ISO_RATIO = 2
 class MainGame:
     def __init__(self,size,input_map=0):
