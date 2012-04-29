@@ -40,11 +40,11 @@ class OverLord:
         # Set Background to White
         self.canvas.fill((250,250,250))
 #       Load map
-        f = open('maps/testmap003.map','r')
+        f = open('maps/testmap003.map','rb')
         demo_map = pickle.load(f)
         f.close()
 #       Load enemies
-        f = open('maps/testmap003.en','r')
+        f = open('maps/testmap003.en','rb')
         enemies = pickle.load(f)
         f.close()
         for enemy in enemies:

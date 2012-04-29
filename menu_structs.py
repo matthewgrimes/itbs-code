@@ -77,8 +77,8 @@ class Menu_Move(Menu):
             if event.type==KEYDOWN and not self.actor.moving:
                 old_pos_x,old_pos_y = self.cursors[-1].pos
                 if event.key==K_ESCAPE:
-                    return ['turn']
                     self.active = 0
+                    return ['turn']
                 if event.key==K_SPACE:
                     #if YN_Prompt().Activate(canvas,screen,current_map,cursor,self.actors)==1:
 
