@@ -1,0 +1,27 @@
+(lp0
+(lp1
+S'characters/sniper.png'
+p2
+a(dp3
+S'hp'
+p4
+I12
+sS'agility'
+p5
+I3
+sS'speed'
+p6
+I4
+sS'name'
+p7
+S'Sniper 2'
+p8
+sS'mp'
+p9
+I10
+saI2
+a(lp10
+I4
+aI4
+aI3
+aaa.

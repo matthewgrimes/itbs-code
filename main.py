@@ -21,7 +21,7 @@ except ImportError, err:
     sys.exit(2)
 
 tile_size = 80
-map_size = [16,16]
+map_size = [16,26]
 ISO_RATIO = 2
 class OverLord:
     def __init__(self,size):
@@ -33,18 +33,18 @@ class OverLord:
 
         # Load players
         self.actors=[
-                character_structs.Actor('characters/assassin.png',{'name':'Assassin','hp':12,'mp':10,'speed':4,'agility':3},1,[5,3,1]),
-                character_structs.Actor('characters/sniper.png',{'hp':12,'mp':10,'speed':5,'agility':2,'name':'Sniper'},1,[3,4,2])
+                character_structs.Actor('characters/assassin.png',{'name':'Assassin','hp':12,'mp':10,'speed':5,'agility':3},1,[5,3,3]),
+                character_structs.Actor('characters/sniper.png',{'hp':12,'mp':10,'speed':5,'agility':2,'name':'Sniper'},1,[3,4,4])
                 ]
 
         # Set Background to White
         self.canvas.fill((250,250,250))
 #       Load map
-        f = open('maps/testmap003.map','rb')
+        f = open('maps/testmap004.map','r')
         demo_map = pickle.load(f)
         f.close()
 #       Load enemies
-        f = open('maps/testmap003.en','rb')
+        f = open('maps/testmap004.en','r')
         enemies = pickle.load(f)
         f.close()
         for enemy in enemies:
