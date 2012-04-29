@@ -39,7 +39,6 @@ class YN_Prompt(Menu):
 
         
     def Handle_Input(self,events):
-            print 'activating yn'
             #canvas = background
             for event in events:
                 if event.type==KEYDOWN:
@@ -128,7 +127,7 @@ class Player_Turn:
                 color = available_color
             else: color = unavailable_color
             text = self.font.render(o,1,color)
-            [text_x,text_y]=[pos[0]+20,pos[1]+20+index*35]
+            [text_x,text_y]=[pos[0]+20,pos[1]+15+index*35]
             canvas.blit(text,[text_x,text_y])
 #       Selected Icon
         pygame.draw.circle(canvas,(0,250,0),[pos[0]+10,pos[1]+30+self.option*35],10)
@@ -154,6 +153,8 @@ class Player_Turn:
         self.available_options=[(not actor.moved) and actor.can_move,
                 (not actor.attacked) and actor.can_attack,1,1]
         self.option = 0
+	while self.available_options[self.option]==0:
+	    self.option = (self.option+1)%len(self.available_options)
         
     def Handle_Input(self,events):
         for event in events:

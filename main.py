@@ -68,7 +68,6 @@ class OverLord:
             output=[]
             HANDLE_INPUT_MYSELF = 1
             while 1:
-                print self.menus[0].active,turn_list,next_step
                 self.clock.tick(60)
                  # Create Turn List
                 if turn_list==[]:
@@ -85,7 +84,6 @@ class OverLord:
                         #print self.menus[1].active
                     elif next_step[0]=='turn':
                         self.menus[0].Activate(self.actors[turn_list[0]],self.maps[0],self.cursor,self.actors)
-                        print 'here'
                     elif next_step[0]=='attack':
                         self.menus[2].Activate(self.actors[turn_list[0]],self.maps[0],self.cursor,self.actors)
                     elif next_step[0][0]=='y':
@@ -94,7 +92,6 @@ class OverLord:
                         turn_list.remove(turn_list[0])
                         try:
                             [self.cursor.pos[0],self.cursor.pos[1]]=self.actors[turn_list[0]].pos
-                            print 'here2'
                             self.menus[0].Activate(actor,self.maps[0],self.cursor,self.actors)
                         except IndexError: pass
                     elif next_step[0]=='back':
@@ -125,15 +122,13 @@ class OverLord:
 	                            self.cursor.Move('up')
 	                        if event.key==K_a:
 	                            [self.cursor.pos[0],self.cursor.pos[1]]=self.actors[turn_list[0]].pos
-                                print 'here3'
-                                self.menus[0].Activate(actor,self.maps[0],self.cursor,self.actors)
+                                    self.menus[0].Activate(actor,self.maps[0],self.cursor,self.actors)
 	                        if event.key==K_SPACE:
 	                            for actor in self.actors:
 	                                if self.cursor.pos==actor.pos:
 	                                    try:
 	                                        if actor==self.actors[turn_list[0]]:
 	                                            self.menus[0].Activate(actor,self.maps[0],self.cursor,self.actors)
-                                                print 'here4'
 	                                    except IndexError: 
 	                                        turn_list = []
 	                                    
