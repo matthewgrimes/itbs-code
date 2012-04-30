@@ -208,7 +208,14 @@ class Player_Attack(Menu):
         for a in actors:
             self.actor_positions.append(a.pos)
         self.cursors = [cursor]
-        self.openList,self.ancestry = utils.draw_circle(actor,current_map,actors,2,1)
+        if actor.character.e_weapon.attack_range==1:
+            self.openList,self.ancestry = utils.draw_circle(actor,current_map,actors,2,1)
+        else:
+            self.openList,self.ancestry = utils.draw_circle(actor,current_map,actors,actor.character.e_weapon.attack_range[1],1)
+            closedList,c_ancestry = utils.draw_circle(actor,current_map,actors,actor.character.e_weapon.attack_range[0],1)
+            for item in closedList:
+                self.openList.remove(self.openList[self.openList.index(item)])
+
                                                    #radius=1,people ok
         for spot in range(1,len(self.openList)):
             cursor = map_structs.Red_Cursor(80,2,[])
@@ -223,12 +230,13 @@ class Player_Attack(Menu):
                     if event.key==K_ESCAPE:
                         self.active = 0
                         return ['turn']
-                    if event.key==K_SPACE:
+                    if event.key==K_SPACE and self.cursors[-1].pos in self.openList:
                         # Get Target
                         for a in self.actors:
                             if a.pos==self.cursors[-1].pos and a!=self.actor:
                                     self.actors[self.actors.index(a)].character.current_hp-=2
                                     self.actor.attacked = 1
+                                    self.actor.moved = 1
                                     self.active = 0
                                     return ['turn']
                     if event.key==K_RIGHT:
@@ -243,7 +251,7 @@ class Player_Attack(Menu):
                     if event.key==K_UP:
                         if self.cursors[-1].pos==self.actor.pos: self.actor.facing = 'ne'
                         self.cursors[-1].Move('up')
-                    if self.cursors[-1].pos not in self.openList: self.cursors[-1].pos = [old_pos_x,old_pos_y]
+                    #if self.cursors[-1].pos not in self.openList: self.cursors[-1].pos = [old_pos_x,old_pos_y]
 
     def Draw_Map(self,canvas,current_map,cursor,actors):
          current_map.Draw(canvas,self.cursors,actors)

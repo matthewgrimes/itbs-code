@@ -16,6 +16,7 @@ try:
     import map_structs
     import character_structs
     import menu_structs
+    import item_structs
 except ImportError, err:
     print "couldn't load module. %s" % (err)
     sys.exit(2)
@@ -37,6 +38,10 @@ class OverLord:
                 character_structs.Actor('characters/sniper.png',{'hp':12,'mp':10,'speed':5,'agility':2,'name':'Sniper'},1,[3,4,4])
                 ]
 
+#       Test weapon
+        rock = item_structs.Weapon('rock',[2,5])
+        self.actors[0].character.Equip_Weapon(rock)
+            
         # Set Background to White
         self.canvas.fill((250,250,250))
 #       Load map
@@ -84,6 +89,7 @@ class OverLord:
                         #print self.menus[1].active
                     elif next_step[0]=='turn':
                         self.menus[0].Activate(self.actors[turn_list[0]],self.maps[0],self.cursor,self.actors)
+                        [self.cursor.pos[0],self.cursor.pos[1]] = self.actors[turn_list[0]].pos
                     elif next_step[0]=='attack':
                         self.menus[2].Activate(self.actors[turn_list[0]],self.maps[0],self.cursor,self.actors)
                     elif next_step[0][0]=='y':
@@ -145,7 +151,7 @@ class OverLord:
                 else: 
                     self.maps[0].Draw(self.canvas,[self.cursor],self.actors)
                 for actor in self.actors:
-                    if actor.pos==self.cursor.pos:
+                    if actor.pos==self.cursor.pos and self.menus[2].active==0:
                         actor.Display_Info(self.canvas)
                 text=pygame.font.Font(None,36).render('Turn '+str(turn),1,(250,250,250))
                 self.canvas.blit(text,(700,0))

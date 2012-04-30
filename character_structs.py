@@ -1,4 +1,4 @@
-import pygame, sys, random, itertools,map_structs,utils
+import pygame, sys, random, itertools,map_structs,utils,item_structs
 from pygame.locals import *
 from utils import load_image
 
@@ -11,6 +11,10 @@ class Character:
         self.agility = stats['agility']
         self.current_hp = self.hp
         self.current_mp = 0
+        self.e_weapon=item_structs.Weapon('hands')
+
+    def Equip_Weapon(self,weapon):
+        self.e_weapon = weapon
 
 class Actor:
     def __init__(self, image,stats,team,pos):
