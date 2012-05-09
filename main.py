@@ -74,7 +74,7 @@ class OverLord:
             HANDLE_INPUT_MYSELF = 1
             while 1:
                 self.clock.tick(60)
-                print str(self.clock.get_fps())
+                #print str(self.clock.get_fps())
                  # Create Turn List
                 if turn_list==[]:
                     turn+=1
