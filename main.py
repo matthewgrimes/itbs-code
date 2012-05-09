@@ -17,6 +17,7 @@ try:
     import character_structs
     import menu_structs
     import item_structs
+    import weapons
 except ImportError, err:
     print "couldn't load module. %s" % (err)
     sys.exit(2)
@@ -39,8 +40,7 @@ class OverLord:
                 ]
 
 #       Test weapon
-        rock = item_structs.Weapon('rock',[2,5])
-        self.actors[0].character.Equip_Weapon(rock)
+        self.actors[0].character.Equip_Weapon(weapons.shortBow)
             
         # Set Background to White
         self.canvas.fill((250,250,250))
