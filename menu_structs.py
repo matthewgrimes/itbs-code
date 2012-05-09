@@ -86,7 +86,7 @@ class Menu_Move(Menu):
                     self.actor.mov_vector.remove(self.actor.mov_vector[0])
                     self.actor.moving = 1
                     self.active = 0
-                    return ['turn']
+                    return ['animating','turn']
                 if event.key==K_RIGHT:
                     self.cursors[-1].Move('right')
                 if event.key==K_LEFT:
@@ -104,6 +104,8 @@ class Menu_Move(Menu):
 class Player_Turn:
     def __init__(self):
         self.active = 0
+        self.activating = 0
+        self.activate_count = 0
         self.canvas = pygame.Surface((205,155))
         self.canvas.fill((0,0,250))
         pygame.draw.rect(self.canvas,(250,0,0),((0,10),(5,150)),5)
@@ -119,9 +121,14 @@ class Player_Turn:
         self.font = pygame.font.Font(None,36)
 
     def Draw(self,canvas,pos):
-        canvas.blit(self.canvas,pos)
         available_color = (250,250,250)
         unavailable_color = (50,50,50)
+        if self.activating == 1:
+            pos[0]-=self.canvas.get_width()/5
+            self.activate_count-=1
+            if self.activate_count==0:
+                self.activating = 0
+        canvas.blit(self.canvas,pos)
         for index,o in enumerate(self.options):
             if self.available_options[index]==1:
                 color = available_color
@@ -150,6 +157,9 @@ class Player_Turn:
 
     def Activate(self,actor,current_map,cursor,actors):
         self.active = 1
+        self.activating = 1
+        self.activate_count = 5
+        self.pos[0] = self.pos[0]+self.canvas.get_width()
         self.available_options=[(not actor.moved) and actor.can_move,
                 (not actor.attacked) and actor.can_attack,1,1]
         self.option = 0

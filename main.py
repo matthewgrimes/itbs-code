@@ -89,6 +89,9 @@ class OverLord:
                     if next_step[0]=='move':
                         self.menus[1].Activate(self.actors[turn_list[0]],self.maps[0],self.cursor,self.actors)
                         #print self.menus[1].active
+                    elif next_step[0]=='animating':
+                        if self.actors[turn_list[0]].moving==1:
+                            next_step.insert(0,'animating')
                     elif next_step[0]=='turn':
                         self.menus[0].Activate(self.actors[turn_list[0]],self.maps[0],self.cursor,self.actors)
                     elif next_step[0]=='attack':
