@@ -77,6 +77,7 @@ class OverLord:
                 #print str(self.clock.get_fps())
                  # Create Turn List
                 if turn_list==[]:
+                    print 'NEW TURN'
                     turn+=1
                     turn_list = utils.sort_actors(self.actors)
                     [self.cursor.pos[0],self.cursor.pos[1]]=self.actors[turn_list[0]].pos
@@ -90,7 +91,6 @@ class OverLord:
                         #print self.menus[1].active
                     elif next_step[0]=='turn':
                         self.menus[0].Activate(self.actors[turn_list[0]],self.maps[0],self.cursor,self.actors)
-                        [self.cursor.pos[0],self.cursor.pos[1]] = self.actors[turn_list[0]].pos
                     elif next_step[0]=='attack':
                         self.menus[2].Activate(self.actors[turn_list[0]],self.maps[0],self.cursor,self.actors)
                     elif next_step[0][0]=='y':
