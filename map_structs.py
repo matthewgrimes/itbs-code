@@ -98,7 +98,7 @@ class Map:
 
         if x<0 + self.tile_size:
             self.pos[0]+=self.tile_size/10
-        if y<0 + self.tile_size:
+        if y<0 + 1.5*self.tile_size:
             self.pos[1]+=self.tile_size/10
 
         if x>800-self.tile_size*2:
