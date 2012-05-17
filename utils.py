@@ -129,3 +129,10 @@ def get_direction(start,end):
             else:
                 return 'sw'
 
+def parabola(d,t):
+    o = 20*d-t
+    m = 30*d-t
+    n = -t
+    y = n*(1-float(t)/20)*(1-float(t)/10)+o*(float(t)/20)*(float(t)/10-1)+m*(2-float(t)/10)*(float(t)/10)
+    print t,y
+    return y
