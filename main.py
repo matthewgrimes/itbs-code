@@ -41,6 +41,7 @@ class OverLord:
 
 #       Test weapon
         self.actors[0].character.Equip_Weapon(weapons.shortBow)
+        self.actors[1].character.Equip_Weapon(weapons.longBow)
             
         # Set Background to White
         self.canvas.fill((250,250,250))
