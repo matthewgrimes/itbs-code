@@ -11,7 +11,7 @@ class Character:
         self.agility = stats['agility']
         self.current_hp = self.hp
         self.current_mp = 0
-        self.e_weapon=item_structs.Weapon('hands')
+        self.e_weapon=item_structs.Weapon('hands','1','b')
 
     def Equip_Weapon(self,weapon):
         self.e_weapon = weapon

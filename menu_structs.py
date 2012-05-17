@@ -220,6 +220,7 @@ class Player_Attack(Menu):
         self.cursors = [cursor]
         if actor.character.e_weapon.attack_range==1:
             self.openList,self.ancestry = utils.draw_circle(actor,current_map,actors,2,1)
+            closedList = []
         else:
             self.openList,self.ancestry = utils.draw_circle(actor,current_map,actors,actor.character.e_weapon.attack_range[1],1)
             closedList,c_ancestry = utils.draw_circle(actor,current_map,actors,actor.character.e_weapon.attack_range[0],1)
