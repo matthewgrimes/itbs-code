@@ -223,14 +223,12 @@ class Player_Attack(Menu):
         else:
             self.openList,self.ancestry = utils.draw_circle(actor,current_map,actors,actor.character.e_weapon.attack_range[1],1)
             closedList,c_ancestry = utils.draw_circle(actor,current_map,actors,actor.character.e_weapon.attack_range[0],1)
-            for item in closedList:
-                self.openList.remove(self.openList[self.openList.index(item)])
-
-                                                   #radius=1,people ok
         for spot in range(1,len(self.openList)):
-            cursor = map_structs.Red_Cursor(80,2,[])
-            [cursor.pos[0],cursor.pos[1]] = self.openList[spot]
-            self.cursors.insert(0,cursor)
+            if not (self.openList[spot] in closedList):
+                cursor = map_structs.Red_Cursor(80,2,[])
+                [cursor.pos[0],cursor.pos[1]] = self.openList[spot]
+                self.cursors.insert(0,cursor)
+        
 
         self.active = 1
     def Handle_Input(self,events):
