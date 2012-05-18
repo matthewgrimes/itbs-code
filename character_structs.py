@@ -142,7 +142,7 @@ class Actor:
               
 	        elif self.facing== 'nw' and self.update_position==1:
 	            self.offset[0] = self.move_t*2-40
-	            self.offset[1] = utils.parabola_down(self.level_difference,self.move_t)
+	            self.offset[1] = 40+utils.parabola_down(self.level_difference,self.move_t)
 	        elif self.facing == 'ne' and self.update_position==1:
 	            self.offset[0] = -self.move_t*2+40
 	            self.offset[1] = self.move_t*1-20

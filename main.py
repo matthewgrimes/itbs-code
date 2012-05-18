@@ -60,7 +60,7 @@ class OverLord:
         self.maps=[map_structs.Map(map_size,demo_map,ISO_RATIO,tile_size)]
         self.cursor = map_structs.Cursor((0,250,0),tile_size,2,
                 [demo_map[1],map_size])
-        self.actors[0].pos=[4,3]
+        self.actors[0].pos=[10,14]
 
         self.menus=[menu_structs.Menu_Move()]
 
