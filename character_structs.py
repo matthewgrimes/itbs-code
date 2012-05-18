@@ -117,6 +117,7 @@ class Actor:
                 else: 
                     self.update_position = 1
                     self.move_t=20
+                    self.level_difference = utils.top_level(current_map,self.mov_vector[0])-self.level
                 #self.offset=[0,0]
         if self.level_difference==0:
 	        if self.facing == 'se':
@@ -134,19 +135,21 @@ class Actor:
         elif self.level_difference<0:
 	        if self.facing == 'se':
 	            self.offset[0] = -self.move_t*2
-	            self.offset[1] = -self.move_t
+	            self.offset[1] = utils.parabola(self.level_difference,self.move_t)
 	        elif self.facing == 'sw':
 	            self.offset[0] = self.move_t*2
-	            self.offset[1] = utils.parabola(self.level_difference,self.move_t)#(20*self.level_difference-self.move_t)*(float(self.move_t)/20)*(float(self.move_t)/20-.5)+(self.move_t)*(1-float(self.move_t)/20)*(float(self.move_t)/20-.5)+(30*self.level_difference-self.move_t)*(1-float(self.move_t)/20)*(float(self.move_t)/20)
+	            self.offset[1] = utils.parabola(self.level_difference,self.move_t)
               
 	        elif self.facing== 'nw' and self.update_position==1:
 	            self.offset[0] = self.move_t*2-40
-	            self.offset[1] = self.move_t*1-20
+	            self.offset[1] = utils.parabola(self.level_difference,self.move_t)
 	        elif self.facing == 'ne' and self.update_position==1:
 	            self.offset[0] = -self.move_t*2+40
 	            self.offset[1] = self.move_t*1-20
         elif self.level_difference>0:
-            print 'going up!'
+            if self.facing == 'nw' and self.update_position==1:
+                self.offset[0] = self.move_t*2-40
+                self.offset[1] = -20-utils.parabola(self.level_difference,self.move_t)
 
 
     def Create_Move_Path(self,new_pos,ancestry):
