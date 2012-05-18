@@ -40,6 +40,7 @@ class Actor:
         self.moving=0
         self.update_position=0
         self.level_difference = 0
+        self.jumping = 0
 
 
         rect = pygame.Rect(((0,0),(32,60)))
@@ -88,14 +89,22 @@ class Actor:
 
         x = loc[0]+tile_width/2-self.images[0].get_width()/2+tile_width/2*(self.pos[1]%2)+self.offset[0]
         y = loc[1]-tile_height/2*self.pos[1]-self.images[0].get_height()+10+self.offset[1]
-        surface.blit(pygame.transform.flip(self.images[self.animate_order[self.animate_count]+3*(self.facing[0]=='n')],(self.facing=='ne' or self.facing=='se'),0),[x,y])
+        if not self.jumping:
+            surface.blit(pygame.transform.flip(self.images[self.animate_order[self.animate_count]+3*(self.facing[0]=='n')],(self.facing=='ne' or self.facing=='se'),0),[x,y])
+        else:
+            surface.blit(pygame.transform.flip(self.images[self.animate_order[1]+3*(self.facing[0]=='n')],(self.facing=='ne' or self.facing=='se'),0),[x,y])
 
     def Move(self,current_map):
         self.move_t-=1
+        if self.level_difference !=0:
+            self.jumping = 1
+        elif self.jumping !=0:
+            self.jumping = 0
         if self.move_t<0:
             if self.mov_vector==[]:
                 self.moving = 0
                 self.level_difference = 0
+                self.jumping = 0
             else:
                 self.facing =  utils.get_direction(self.pos,self.mov_vector[0])
                 self.level_difference = 0

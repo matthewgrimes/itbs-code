@@ -194,7 +194,7 @@ class Cursor:
 
     def Draw(self,surface,pos):
         self.flash_count=(self.flash_count+1)%140
-        self.surface.set_alpha(75+55*math.cos(self.flash_count*2*3.14159/140))
+        self.surface.set_alpha(105+35*math.cos(self.flash_count*2*3.14159/140))
         surface.blit(self.surface,pos)
         surface.blit(self.surface_head,[pos[0],pos[1]-75-5*math.cos(self.flash_count*2*3.14159/35)])
 
