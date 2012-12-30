@@ -7,15 +7,18 @@ class Tile:
         if water:
             self.images=[]
             self.rects=[]
-            image,rect = load_image('custom_water_still.png')
-            rect = pygame.Rect((0,0),(80,40))
-            for i in range(0,20):
-                im = pygame.Surface((80,40))
-                im.blit(image,(0,0),rect.move([40*i,20*i]))
-                pygame.draw.polygon(im,(0,0,0),((0,20),(0,0),(40,0)))
+            rect = pygame.Rect((0,0),(80,60))
+            self.frames = 2*71
+            for i in range(0,self.frames-1):
+                im = pygame.Surface((80,60))
+                image,rect = load_image('water_images/water-'+str(71-abs(i-71))+'.png',-1)
+                im.blit(image,(0,0),rect)
+                image,rect = load_image('water_images/test-'+str(71-abs(i-71))+'.png',(231,77,189))
+                pygame.draw.polygon(image, (231,77,189,255), ((0,22),(40,41),(0,41)))
+                image.set_alpha(80)
+                im.blit(image,(0,20),rect)
                 self.images.append(im)
                 self.rects.append(rect)
-                self.images[i].set_alpha(180)
                 self.images[i].set_colorkey((0,0,0))
                 self.images[i]=self.images[i].convert_alpha()
             self.image_count = 0
@@ -25,36 +28,12 @@ class Tile:
             self.image,self.rect = load_image(image,-1)
             self.image = self.image.convert()
 
-        self.sides = [pygame.Surface((40,40))]
-        if water==0:
-            color_left = (139,69,19)
-            color_right = (92,51,23)
-        else:
-            color_left = (0,0,250)
-            color_right = (0,0,150)
-        pygame.draw.polygon(self.sides[0],color_left,((0,0),(40,20),(40,40),(0,20)))
-        self.sides[0].set_colorkey((0,0,0))
-        self.sides[0].set_alpha(255-water*175)
-        
-        self.sides.append(pygame.Surface((40,40)))
-        pygame.draw.polygon(self.sides[1],color_right,((0,0),(40,20),(40,40),(0,20)))
-        self.sides[1].set_colorkey((0,0,0))
-        self.sides[1].set_alpha(255-water*175)
-        if image=='grass.png':
-            self.sides[0],r=load_image('grass_left.png',-1)
-            self.sides[1],r=load_image('grass_right.png',-1)
-            self.sides[1] = pygame.transform.flip(self.sides[1],0,1)
-        elif image=='dirt.png':
-            self.sides[0],r=load_image('dirt_left.png',(155,155,155))
-            self.sides[1],r=load_image('dirt_right.png',-1)
-            self.sides[1] = pygame.transform.flip(self.sides[1],0,1)
-
     def Update(self):
         if self.water==0:
             return
         else:
             self.animate_count+=1
-            if self.animate_count==5:
+            if self.animate_count==1:#self.frames:
                 self.animate_count=0
                 self.image_count=(self.image_count+1)%len(self.images)
             self.image = self.images[self.image_count]
@@ -134,11 +113,11 @@ class Map:
                         surface.blit(self.tiles[self.layout[level][i+j*self.size[0]]].image,
                                                 [x+tile_size/2*(j%2),y-tile_size/(2*ratio)*(j+1)])
                         # Draw Left Side
-                        surface.blit(self.tiles[self.layout[level][i+j*self.size[0]]].sides[0],
-                                                [x+tile_size/2*(j%2),y-tile_size/(2*ratio)*(j)])
+                        #surface.blit(self.tiles[self.layout[level][i+j*self.size[0]]].sides[0],
+                        #                        [x+tile_size/2*(j%2),y-tile_size/(2*ratio)*(j)])
                         # Draw Right Side
-                        surface.blit(pygame.transform.flip(self.tiles[self.layout[level][i+j*self.size[0]]].sides[1],0,1),
-                                                [x+tile_size/2*(j%2)+tile_size/2,y-tile_size/(2*ratio)*(j)])
+                        #surface.blit(pygame.transform.flip(self.tiles[self.layout[level][i+j*self.size[0]]].sides[1],0,1),
+                        #                        [x+tile_size/2*(j%2)+tile_size/2,y-tile_size/(2*ratio)*(j)])
                         # Draw Cursor
                         for cursor in cursors:
                             if [i,j]==cursor.pos and (self.layout[level+1][i + j * self.size[0]]==-1 or level==self.layout[0]):
