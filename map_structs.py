@@ -13,7 +13,7 @@ class Tile:
                 im = pygame.Surface((80,60))
                 image,rect = load_image('water_images/water-'+str(71-abs(i-71))+'.png',-1)
                 im.blit(image,(0,0),rect)
-                image,rect = load_image('water_images/test-'+str(71-abs(i-71))+'.png',(231,77,189))
+                image,rect = load_image('water_images/water_side-'+str(71-abs(i-71))+'.png',(231,77,189))
                 pygame.draw.polygon(image, (231,77,189,255), ((0,22),(40,41),(0,41)))
                 image.set_alpha(80)
                 im.blit(image,(0,20),rect)
