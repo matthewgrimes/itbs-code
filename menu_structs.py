@@ -7,6 +7,51 @@ class Menu:
     def __init__(self):
         self.active = 0
 
+class Character_Status(Menu):
+    def __init__(self):
+        self.active = 0
+        self.canvas = pygame.Surface((800,450))
+        self.canvas.fill((0,0,250))
+        #self.canvas.set_alpha(120)
+        self.pos = [400-.5*self.canvas.get_width(),(450-self.canvas.get_height())/2]
+        self.font = pygame.font.Font(None,36)
+
+    def Draw(self,canvas):
+        #   Default Background
+        canvas.blit(self.canvas,self.pos)
+
+        # Draw Stats
+        color = (250,250,250)
+        stats = [self.actor.character.name,
+                str(self.actor.character.speed),
+                str(self.actor.character.agility),
+                str(self.actor.character.current_hp)+'/'+str(self.actor.character.hp),
+                str(self.actor.character.current_mp)+'/'+str(self.actor.character.mp),
+                str(self.actor.character.e_weapon.name)]
+        stat_names = ['','Speed:','Agility:','HP:','MP:','Equipped Weapon:']
+        for i in range(0,len(stats)):
+            text = self.font.render(stat_names[i]+str(stats[i]),1,color)
+            canvas.blit(text,[20,20*i+70])
+        self.actor.Draw(canvas,self.pos,1)
+
+    def Activate(self,actor,current_map,cursor,actors):      
+        self.active = 1
+        self.actor = utils.selected_actor([cursor][-1],actors)
+        if self.actor == 0:
+            self.active = 0
+
+        
+    def Handle_Input(self,events):
+            for event in events:
+                if event.type==KEYDOWN:
+                    if event.key==K_ESCAPE:
+                        self.active = 0    
+                        return ['back']
+
+    def Draw_Map(self,canvas,current_map,cursor,actors):
+            #current_map.Draw(canvas,[cursor],actors)
+            self.Draw(canvas)
+
 class YN_Prompt(Menu):
     def __init__(self):
         self.active = 0
@@ -70,11 +115,15 @@ class Menu_Move(Menu):
             self.cursors.insert(0,cursor)
         self.active = 1
         self.actor = actor
+        self.actors = actors
 
     def Handle_Input(self,events):
         for event in events:
             if event.type==KEYDOWN and not self.actor.moving:
                 old_pos_x,old_pos_y = self.cursors[-1].pos
+                if event.key==K_c and utils.selected_actor(self.cursors[-1],self.actors)!=0:
+                    self.active = 0
+                    return ['status']
                 if event.key==K_ESCAPE:
                     self.active = 0
                     return ['turn']
@@ -165,6 +214,8 @@ class Player_Turn:
         self.option = 0
 	while self.available_options[self.option]==0:
 	    self.option = (self.option+1)%len(self.available_options)
+        self.cursor = cursor
+        self.actors = actors
         
     def Handle_Input(self,events):
         for event in events:
@@ -181,6 +232,9 @@ class Player_Turn:
                     while self.available_options[self.option]==0:
                         self.option=(self.option-1)%len(self.options)
 
+                if event.key==K_c and utils.selected_actor(self.cursor,self.actors)!=0:
+                    self.active = 0
+                    return ['status']
                 if event.key==K_SPACE:
                     if self.option==0:
                         #if Menu_Move().Activate(self,canvas,screen,current_map,cursor,actors)==1:
@@ -236,6 +290,9 @@ class Player_Attack(Menu):
             for event in events:
                 if event.type==KEYDOWN:
                     old_pos_x,old_pos_y = self.cursors[-1].pos
+                    if event.key==K_c and utils.selected_actor(self.cursors[-1],self.actors)!=0:
+                        self.active = 0
+                        return ['status']
                     if event.key==K_ESCAPE:
                         self.active = 0
                         return ['turn']

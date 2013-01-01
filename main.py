@@ -64,32 +64,42 @@ class OverLord:
 
         self.menus=[menu_structs.Menu_Move()]
 
+
     def run(self):
 #           Initialize menus
-            self.menus = [menu_structs.Player_Turn(),menu_structs.Menu_Move(),menu_structs.Player_Attack(),menu_structs.YN_Prompt()]
+            self.menus = [menu_structs.Player_Turn(),menu_structs.Menu_Move(),menu_structs.Player_Attack(),menu_structs.YN_Prompt(),menu_structs.Character_Status()]
             next_step = []
             turn = 0
+
             # Keep Track of current player
             turn_list=[]
             output=[]
+            # This variable tells the main engine whether or not to handle key input
             HANDLE_INPUT_MYSELF = 1
             while 1:
+                # Caps the framerate 
                 self.clock.tick(60)
                 #print str(self.clock.get_fps())
-                 # Create Turn List
+                # Create Turn List
                 if turn_list==[]:
                     print 'NEW TURN'
                     turn+=1
                     turn_list = utils.sort_actors(self.actors)
+                    # Move Cursor to first actor
                     [self.cursor.pos[0],self.cursor.pos[1]]=self.actors[turn_list[0]].pos
+
+                    # Prepare actors for turn new turn
                     for actor in self.actors:
                         actor.NewTurn()
-                    [self.cursor.pos[0],self.cursor.pos[1]]=self.actors[turn_list[0]].pos
+
+
+                    # This doesn't seem to be necessary: [self.cursor.pos[0],self.cursor.pos[1]]=self.actors[turn_list[0]].pos
+                    # Activate turn menu
                     self.menus[0].Activate(actor,self.maps[0],self.cursor,self.actors)
                 if next_step!=[]:
                     if next_step[0]=='move':
                         self.menus[1].Activate(self.actors[turn_list[0]],self.maps[0],self.cursor,self.actors)
-                        #print self.menus[1].active
+
                     elif next_step[0]=='animating':
                         if self.actors[turn_list[0]].moving==1:
                             next_step.insert(0,'animating')
@@ -99,6 +109,8 @@ class OverLord:
                         self.menus[2].Activate(self.actors[turn_list[0]],self.maps[0],self.cursor,self.actors)
                     elif next_step[0][0]=='y':
                         self.menus[3].Activate(self.actors[turn_list[0]],self.maps[0],self.cursor,self.actors)
+                    elif next_step[0]=='status':
+                        self.menus[4].Activate(self.actors[turn_list[0]],self.maps[0],self.cursor,self.actors)
                     elif next_step[0]=='done_with_turn':
                         turn_list.remove(turn_list[0])
                         try:
@@ -115,11 +127,12 @@ class OverLord:
                         output = menu.Handle_Input(pygame.event.get())
                         if output!=[] and output!=None:
                             for out in output:
-                                next_step.append(out)
+                                next_step.insert(0,out)
                 for actor in self.actors:
                     if actor.moving==1:
                         actor.Move(self.maps[0])
                 if HANDLE_INPUT_MYSELF==1: 
+                    # Handle Input:
                     for event in pygame.event.get():
 	                    if event.type==KEYDOWN:
 	                        if event.key==K_ESCAPE: sys.exit()
@@ -131,6 +144,9 @@ class OverLord:
 	                            self.cursor.Move('down')
 	                        if event.key==K_UP:
 	                            self.cursor.Move('up')
+                                if event.key==K_c:
+                                    if utils.selected_actor(self.cursor,self.actors)!=0:
+                                        self.menus[4].Activate(actor,self.maps[0],self.cursor,self.actors)
 	                        if event.key==K_a:
 	                            [self.cursor.pos[0],self.cursor.pos[1]]=self.actors[turn_list[0]].pos
                                     self.menus[0].Activate(actor,self.maps[0],self.cursor,self.actors)
@@ -145,19 +161,18 @@ class OverLord:
 	                                    
                            
                 self.canvas.fill((0,0,0))
-                if self.menus[0].active==1:
-                    self.menus[0].Draw_Map(self.canvas,self.maps[0],self.cursor,self.actors)
-                elif self.menus[1].active==1:
-                    self.menus[1].Draw_Map(self.canvas,self.maps[0],self.cursor,self.actors)
-                elif self.menus[2].active==1:
-                    self.menus[2].Draw_Map(self.canvas,self.maps[0],self.cursor,self.actors)
-                elif self.menus[3].active==1:
-                    self.menus[3].Draw_Map(self.canvas,self.maps[0],self.cursor,self.actors)
-                else: 
+                drawn = 0
+                for m in self.menus:
+                    if m.active==1:
+                        m.Draw_Map(self.canvas,self.maps[0],self.cursor,self.actors)
+                        drawn = 1
+                if drawn == 0:
                     self.maps[0].Draw(self.canvas,[self.cursor],self.actors)
                 for actor in self.actors:
-                    if actor.pos==self.cursor.pos and self.menus[2].active==0:
+                    if actor.pos==self.cursor.pos and self.menus[2].active==0 and self.menus[4].active==0:
                         actor.Display_Info(self.canvas)
+
+                # Draw Map and Text
                 text=pygame.font.Font(None,36).render('Turn '+str(turn),1,(250,250,250))
                 self.canvas.blit(text,(700,0))
                 self.screen.blit(self.canvas,[0,0])

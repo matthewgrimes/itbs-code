@@ -2,6 +2,13 @@ import os,pygame
 from pygame.constants import *
 from global_vars import *
 
+def selected_actor(cursor, actors):
+    s = 0
+    for a in actors:
+        if a.pos==[cursor][-1].pos:
+            s = a
+    return s
+
 def load_image(name, colorkey=None):
 	fullname = os.path.join('data',name)
 	try:

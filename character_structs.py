@@ -79,7 +79,7 @@ class Actor:
         self.attacked = 0
 
 
-    def Draw(self,surface,loc):
+    def Draw(self,surface,loc,offmap=0):
         tile_width = 80
         tile_height = 40
         self.animate_timer+=1
@@ -89,6 +89,9 @@ class Actor:
 
         x = loc[0]+tile_width/2-self.images[0].get_width()/2+tile_width/2*(self.pos[1]%2)+self.offset[0]
         y = loc[1]-tile_height/2*self.pos[1]-self.images[0].get_height()+10+self.offset[1]
+        if offmap: 
+            x = loc[0]
+            y = loc[1]
         if not self.jumping:
             surface.blit(pygame.transform.flip(self.images[self.animate_order[self.animate_count]+3*(self.facing[0]=='n')],(self.facing=='ne' or self.facing=='se'),0),[x,y])
         else:
