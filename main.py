@@ -122,7 +122,8 @@ class OverLord:
 
                     next_step.remove(next_step[0])
                 for menu in self.menus:
-                    if menu.active==1:
+                    if menu.active==1 and (next_step==[] or
+                                           next_step[0]!='animating'):
                         HANDLE_INPUT_MYSELF = 0
                         output = menu.Handle_Input(pygame.event.get())
                         if output!=[] and output!=None:
@@ -131,7 +132,7 @@ class OverLord:
                 for actor in self.actors:
                     if actor.moving==1:
                         actor.Move(self.maps[0])
-                if HANDLE_INPUT_MYSELF==1: 
+                if HANDLE_INPUT_MYSELF==1:
                     # Handle Input:
                     for event in pygame.event.get():
 	                    if event.type==KEYDOWN:
@@ -149,7 +150,8 @@ class OverLord:
                                         self.menus[4].Activate(actor,self.maps[0],self.cursor,self.actors)
 	                        if event.key==K_a:
 	                            [self.cursor.pos[0],self.cursor.pos[1]]=self.actors[turn_list[0]].pos
-                                    self.menus[0].Activate(actor,self.maps[0],self.cursor,self.actors)
+                                    # This next line is buggy for some reason
+                                    #self.menus[0].Activate(actor,self.maps[0],self.cursor,self.actors)
 	                        if event.key==K_SPACE:
 	                            for actor in self.actors:
 	                                if self.cursor.pos==actor.pos:
