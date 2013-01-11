@@ -6,6 +6,7 @@ from pygame.locals import *
 class Menu:
     def __init__(self):
         self.active = 0
+        self.old_facing = 0
 
 class Character_Status(Menu):
     def __init__(self):
@@ -22,20 +23,24 @@ class Character_Status(Menu):
 
         # Draw Stats
         color = (250,250,250)
-        stats = [self.actor.character.name,
-                str(self.actor.character.speed),
-                str(self.actor.character.agility),
-                str(self.actor.character.current_hp)+'/'+str(self.actor.character.hp),
-                str(self.actor.character.current_mp)+'/'+str(self.actor.character.mp),
-                str(self.actor.character.e_weapon.name)]
-        stat_names = ['','Speed:','Agility:','HP:','MP:','Equipped Weapon:']
+        stats = [
+                self.actor.character.name,
+                'HP:'+str(self.actor.character.current_hp)+'/'+str(self.actor.character.hp),
+                'MP:'+str(self.actor.character.current_mp)+'/'+str(self.actor.character.mp),
+                'Strength:'+str(self.actor.character.strength),
+                'Speed:'+str(self.actor.character.speed),
+                'Agility:'+str(self.actor.character.agility),
+            'Weapon:'+str(self.actor.character.e_weapon.stats)]
+            
         for i in range(0,len(stats)):
-            text = self.font.render(stat_names[i]+str(stats[i]),1,color)
+            text = self.font.render(str(stats[i]),1,color)
             canvas.blit(text,[20,20*i+70])
         self.actor.Draw(canvas,self.pos,1)
 
     def Activate(self,actor,current_map,cursor,actors):      
         self.active = 1
+        self.old_facing = actor.facing
+        actor.facing = 'se'
         self.actor = utils.selected_actor([cursor][-1],actors)
         if self.actor == 0:
             self.active = 0
@@ -46,6 +51,7 @@ class Character_Status(Menu):
                 if event.type==KEYDOWN:
                     if event.key==K_ESCAPE:
                         self.active = 0    
+                        self.actor.facing = self.old_facing
                         return ['back']
 
     def Draw_Map(self,canvas,current_map,cursor,actors):
@@ -266,6 +272,7 @@ class Player_Turn:
 class Player_Attack(Menu):
 
     def Activate(self,actor,current_map,cursor,actors):
+        self.font = pygame.font.Font(None,18)
         self.actor = actor
         self.actors = actors
         self.actor_positions = []
@@ -300,10 +307,13 @@ class Player_Attack(Menu):
                         # Get Target
                         for a in self.actors:
                             if a.pos==self.cursors[-1].pos and a!=self.actor:
-                                    self.actors[self.actors.index(a)].character.current_hp-=2
+                                    damage = utils.calculate_weapon_damage(self.actor,a)
+                                    self.actors[self.actors.index(a)].character.current_hp-=damage
                                     self.actor.attacked = 1
                                     self.actor.moved = 1
                                     self.active = 0
+                                    self.cursors[-1].pos[0]=self.actor.pos[0]
+                                    self.cursors[-1].pos[1]=self.actor.pos[1]
                                     return ['turn']
                     if event.key==K_RIGHT:
                         if self.cursors[-1].pos==self.actor.pos: self.actor.facing = 'se'
@@ -317,11 +327,14 @@ class Player_Attack(Menu):
                     if event.key==K_UP:
                         if self.cursors[-1].pos==self.actor.pos: self.actor.facing = 'ne'
                         self.cursors[-1].Move('up')
-                    #if self.cursors[-1].pos not in self.openList: self.cursors[-1].pos = [old_pos_x,old_pos_y]
 
     def Draw_Map(self,canvas,current_map,cursor,actors):
          current_map.Draw(canvas,self.cursors,actors)
          self.actor.Display_Info(canvas)
          if self.cursors[-1].pos in self.actor_positions:
-             actors[self.actor_positions.index(self.cursors[-1].pos)].Display_Info(canvas,[800,300],1)
+             actor = self.actor_positions.index(self.cursors[-1].pos)
+             damage = utils.calculate_weapon_damage(self.actor,actors[actor])
+             actors[actor].Display_Info(canvas,[800,300],1)
+             utils.draw_attack_info(canvas,damage,100)
+                          
 

@@ -7,6 +7,7 @@ class Character:
         self.name = stats['name']
         self.hp = stats['hp']
         self.mp = stats['mp']
+        self.strength = stats['strength']
         self.speed = stats['speed']
         self.agility = stats['agility']
         self.current_hp = self.hp

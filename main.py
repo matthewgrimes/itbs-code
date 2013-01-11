@@ -35,8 +35,8 @@ class OverLord:
 
         # Load players
         self.actors=[
-                character_structs.Actor('characters/assassin.png',{'name':'Assassin','hp':12,'mp':10,'speed':5,'agility':3},1,[5,3,3]),
-                character_structs.Actor('characters/sniper.png',{'hp':12,'mp':10,'speed':5,'agility':2,'name':'Sniper'},1,[3,4,4])
+            character_structs.Actor('characters/assassin.png',{'name':'Assassin','hp':12,'mp':10,'speed':5,'agility':3,'strength':2},1,[5,3,3]),
+            character_structs.Actor('characters/sniper.png',{'hp':12,'mp':10,'speed':5,'agility':2,'strength':2,'name':'Sniper'},1,[3,4,4])
                 ]
 
 #       Test weapon
@@ -62,8 +62,22 @@ class OverLord:
                 [demo_map[1],map_size])
         self.actors[0].pos=[10,14]
 
-        self.menus=[menu_structs.Menu_Move()]
+        self.menus=[]
 
+    def newturn(self):
+        print 'NEW TURN'
+        turn_list = utils.sort_actors(self.actors)
+        # Move Cursor to first actor
+        [self.cursor.pos[0],self.cursor.pos[1]]=self.actors[turn_list[0]].pos
+
+        # Prepare actors for turn new turn
+        for actor in self.actors:
+            actor.NewTurn()
+
+
+        # Activate turn menu
+        self.menus[0].Activate(actor,self.maps[0],self.cursor,self.actors)
+        return turn_list
 
     def run(self):
 #           Initialize menus
@@ -79,23 +93,14 @@ class OverLord:
             while 1:
                 # Caps the framerate 
                 self.clock.tick(60)
+
+                # Prints the framerate
                 #print str(self.clock.get_fps())
                 # Create Turn List
                 if turn_list==[]:
-                    print 'NEW TURN'
+                    turn_list = self.newturn()
                     turn+=1
-                    turn_list = utils.sort_actors(self.actors)
-                    # Move Cursor to first actor
-                    [self.cursor.pos[0],self.cursor.pos[1]]=self.actors[turn_list[0]].pos
 
-                    # Prepare actors for turn new turn
-                    for actor in self.actors:
-                        actor.NewTurn()
-
-
-                    # This doesn't seem to be necessary: [self.cursor.pos[0],self.cursor.pos[1]]=self.actors[turn_list[0]].pos
-                    # Activate turn menu
-                    self.menus[0].Activate(actor,self.maps[0],self.cursor,self.actors)
                 if next_step!=[]:
                     if next_step[0]=='move':
                         self.menus[1].Activate(self.actors[turn_list[0]],self.maps[0],self.cursor,self.actors)
@@ -121,6 +126,8 @@ class OverLord:
                         HANDLE_INPUT_MYSELF = 1
 
                     next_step.remove(next_step[0])
+
+#               Get input from active menus
                 for menu in self.menus:
                     if menu.active==1 and (next_step==[] or
                                            next_step[0]!='animating'):
@@ -129,9 +136,14 @@ class OverLord:
                         if output!=[] and output!=None:
                             for out in output:
                                 next_step.insert(0,out)
+
+                #   Update the actors if they are moving
                 for actor in self.actors:
                     if actor.moving==1:
                         actor.Move(self.maps[0])
+
+
+
                 if HANDLE_INPUT_MYSELF==1:
                     # Handle Input:
                     for event in pygame.event.get():
@@ -162,6 +174,7 @@ class OverLord:
 	                                        turn_list = []
 	                                    
                            
+#               Drawing routines
                 self.canvas.fill((0,0,0))
                 drawn = 0
                 for m in self.menus:
