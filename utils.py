@@ -7,7 +7,7 @@ def calculate_weapon_damage(attacker,target):
     damage = attacker.character.strength+attacker.character.e_weapon.damage
 
     # Height Difference
-    if attacker.character.e_weapon.ranged==0: damage = max(damage + (attacker.level - target.level)*2,0)
+    if attacker.character.e_weapon.attack_range==1: damage = max(damage + (attacker.level - target.level)*2,0)
     else: damage = max(damage + attacker.level - target.level,0)
     return damage
 
