@@ -35,13 +35,15 @@ class Actor:
         self.facing = 'se'
         self.animate_count = 0
         self.animate_order = [0,1,2,1]
-        self.animate_timer = 0
         self.images=[]
         self.move_t=0
         self.moving=0
         self.update_position=0
         self.level_difference = 0
         self.jumping = 0
+        self.animation_clock = pygame.time.Clock()
+        self.last_animated=pygame.time.get_ticks()
+        self.animation_frame_time = 333
 
 
         rect = pygame.Rect(((0,0),(32,60)))
@@ -83,10 +85,10 @@ class Actor:
     def Draw(self,surface,loc,offmap=0):
         tile_width = 80
         tile_height = 40
-        self.animate_timer+=1
-        if self.animate_timer==7:
+        if pygame.time.get_ticks()-self.last_animated>=self.animation_frame_time:
             self.animate_count = (self.animate_count+1)%4
             self.animate_timer=0
+            self.last_animated = pygame.time.get_ticks()
 
         x = loc[0]+tile_width/2-self.images[0].get_width()/2+tile_width/2*(self.pos[1]%2)+self.offset[0]
         y = loc[1]-tile_height/2*self.pos[1]-self.images[0].get_height()+10+self.offset[1]
