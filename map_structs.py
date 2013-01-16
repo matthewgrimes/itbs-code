@@ -21,8 +21,9 @@ class Tile:
                 self.rects.append(rect)
                 self.images[i].set_colorkey((0,0,0))
                 self.images[i]=self.images[i].convert_alpha()
+                self.last_animated = pygame.time.get_ticks()
+                self.animation_frame_time = 42
             self.image_count = 0
-            self.animate_count = 0
             self.image = self.images[0]
         else:
             self.image,self.rect = load_image(image,-1)
@@ -32,9 +33,8 @@ class Tile:
         if self.water==0:
             return
         else:
-            self.animate_count+=1
-            if self.animate_count==1:#self.frames:
-                self.animate_count=0
+            if pygame.time.get_ticks() - self.last_animated >=self.animation_frame_time:
+                self.last_animated = pygame.time.get_ticks()
                 self.image_count=(self.image_count+1)%len(self.images)
             self.image = self.images[self.image_count]
 
