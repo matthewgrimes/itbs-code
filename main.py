@@ -57,6 +57,8 @@ class OverLord:
         f.close()
         for enemy in enemies:
             self.actors.append(character_structs.Actor(enemy[0],enemy[1],enemy[2],enemy[3]))
+            # Equip a basic weapon on the enemy
+            self.actors[-1].character.Equip_Weapon(weapons.shortBow)
 
 
         self.maps=[map_structs.Map(map_size,demo_map,ISO_RATIO,tile_size)]
@@ -154,8 +156,8 @@ class OverLord:
                     for event in pygame.event.get():
 	                    if event.type==KEYDOWN:
 	                        if event.key==K_ESCAPE: sys.exit()
-                                if event.key==K_e:
-                                   self.maps[0].effects[0].Create([self.cursor.pos[0],self.cursor.pos[1]])
+                                #if event.key==K_e:
+                                   #self.maps[0].effects[0].Create([self.cursor.pos[0],self.cursor.pos[1]])
                                    #self.maps[0].effects.append(self.effects[0])
                                    #self.maps[0].effects[-1].location[0]=self.cursor.pos[0]
                                    #self.maps[0].effects[-1].location[1]=self.cursor.pos[1]
