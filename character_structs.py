@@ -44,6 +44,8 @@ class Actor:
         self.animation_clock = pygame.time.Clock()
         self.last_animated=pygame.time.get_ticks()
         self.animation_frame_time = 333
+        self.movement_time = 33
+        self.movement_last_updated = pygame.time.get_ticks()
 
 
         rect = pygame.Rect(((0,0),(32,60)))
@@ -92,6 +94,7 @@ class Actor:
 
         x = loc[0]+tile_width/2-self.images[0].get_width()/2+tile_width/2*(self.pos[1]%2)+self.offset[0]
         y = loc[1]-tile_height/2*self.pos[1]-self.images[0].get_height()+10+self.offset[1]
+
         if offmap: 
             x = loc[0]
             y = loc[1]
@@ -101,7 +104,9 @@ class Actor:
             surface.blit(pygame.transform.flip(self.images[self.animate_order[1]+3*(self.facing[0]=='n')],(self.facing=='ne' or self.facing=='se'),0),[x,y])
 
     def Move(self,current_map):
-        self.move_t-=1
+        if pygame.time.get_ticks() - self.movement_last_updated>=self.movement_time:
+            self.movement_last_updated = pygame.time.get_ticks()
+            self.move_t-=1
         if self.level_difference !=0:
             self.jumping = 1
         elif self.jumping !=0:

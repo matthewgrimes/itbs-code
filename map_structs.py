@@ -1,6 +1,59 @@
 import pygame, sys, random, itertools, math, pickle
 from pygame.locals import *
 from utils import load_image
+class Effect:
+    def __init__(self,name,size,framerate,duration):
+        filename = 'effects/'+name+'/'+name
+        number_images = framerate*duration
+        self.data = []
+        for i in range(0,number_images):
+            image,rect = load_image(filename+str(i+1).zfill(3)+'.png',-1)
+            self.data.append(image)
+        self.duration = duration
+        self.size = size
+        self.width = self.size[0]
+        self.height = self.size[1]
+        self.animation_frame_time = 1000/framerate
+        self.births = []
+        self.counters = []
+        self.locations = []
+        self.last_animated = []
+
+
+    def Create(self,location):
+        self.locations.append(location)
+        self.counters.append(0)
+        self.births.append(pygame.time.get_ticks())
+        self.last_animated.append(pygame.time.get_ticks())
+
+    def Draw(self,surface,index,pos):
+        tile_width = 80
+        tile_height = 40
+        loc = self.locations[index]
+        x = pos[0]+tile_width/2-self.width/2+tile_width/2*(loc[1]%2)
+        y = pos[1]-tile_height/2*loc[1]-self.height
+        #surface.blit(self.data,[x,y],((9,self.height*self.counters[index]),(self.width,self.height)))
+        try:
+            surface.blit(self.data[self.counters[index]],[x,y])
+        except IndexError:
+            return
+
+    def Update(self):
+        for loc in self.locations:
+            if pygame.time.get_ticks()-self.last_animated[self.locations.index(loc)]>=self.animation_frame_time:
+                self.counters[self.locations.index(loc)] = self.counters[self.locations.index(loc)]+1
+                self.last_animated[self.locations.index(loc)] = pygame.time.get_ticks()
+            if pygame.time.get_ticks()-self.births[self.locations.index(loc)] >= self.duration*1000:
+                self.births.remove(self.births[self.locations.index(loc)])
+                self.counters.remove(self.counters[self.locations.index(loc)])
+                self.last_animated.remove(self.last_animated[self.locations.index(loc)])
+                self.locations.remove(self.locations[self.locations.index(loc)])
+
+                
+
+        
+
+
 class Tile:
     def __init__(self,image,water=0):
         self.water = water
@@ -55,6 +108,7 @@ class Map:
         tile_list = pickle.load(open('data/tile_list.li','r'))
         #self.tiles = [Tile('cobblestone.png'),Tile('grass.png'),Tile('water',1),Tile('dungeon.png')]
         self.tiles = []
+        self.effects = []
         for tile in tile_list:
             if str(tile)!='water': self.tiles.append(Tile(str(tile)+'.png'))
             else: self.tiles.append(Tile('water',1))
@@ -89,6 +143,8 @@ class Map:
         for tile in self.tiles:
             tile.Update()
 
+        for effect in self.effects:
+            effect.Update()
 
     def Draw(self,surface,cursors,actors):
         self.Update(cursors[-1])
@@ -112,12 +168,6 @@ class Map:
                     if self.layout[level][i + j * self.size[0]]!=-1:
                         surface.blit(self.tiles[self.layout[level][i+j*self.size[0]]].image,
                                                 [x+tile_size/2*(j%2),y-tile_size/(2*ratio)*(j+1)])
-                        # Draw Left Side
-                        #surface.blit(self.tiles[self.layout[level][i+j*self.size[0]]].sides[0],
-                        #                        [x+tile_size/2*(j%2),y-tile_size/(2*ratio)*(j)])
-                        # Draw Right Side
-                        #surface.blit(pygame.transform.flip(self.tiles[self.layout[level][i+j*self.size[0]]].sides[1],0,1),
-                        #                        [x+tile_size/2*(j%2)+tile_size/2,y-tile_size/(2*ratio)*(j)])
                         # Draw Cursor
                         for cursor in cursors:
                             if [i,j]==cursor.pos and (self.layout[level+1][i + j * self.size[0]]==-1 or level==self.layout[0]):
@@ -134,7 +184,11 @@ class Map:
                                     actor.Draw(surface,[x,y])#[x+tile_size/2*(j%2),y-tile_size/(2*ratio)*(j)+tile_size/(4*ratio)])
 
                 
-                
+                        # Draw Effects
+                        for effect in self.effects:
+                            if [i,j] in effect.locations and (self.layout[level+1][i + j * self.size[0]]==-1 or level==self.layout[0]):
+                                effect.Draw(surface,effect.locations.index([i,j]),[x,y])
+
                         #self.Draw_Grid(surface,(x+tile_size/2*(j%2),y-tile_size/(2*ratio)*(j)),tile_size,ratio)
                         #text = font.render('('+str(i)+','+str(j)+')',1,(250,0,0))
                         #surface.blit(text,(x+tile_size/2*(j%2)+30,y-tile_size/(2*ratio)*(j)))

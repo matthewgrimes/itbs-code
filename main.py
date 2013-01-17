@@ -39,6 +39,8 @@ class OverLord:
             character_structs.Actor('characters/sniper.png',{'hp':12,'mp':10,'speed':5,'agility':2,'strength':2,'name':'Sniper'},1,[3,4,4])
                 ]
 
+
+
 #       Test weapon
         self.actors[0].character.Equip_Weapon(weapons.shortBow)
         self.actors[1].character.Equip_Weapon(weapons.longBow)
@@ -63,6 +65,9 @@ class OverLord:
         self.actors[0].pos=[10,14]
 
         self.menus=[]
+
+        # Load Effects
+        self.effects=[self.maps[0].effects.append(map_structs.Effect('fire',[120,320],24,7))]
 
     def newturn(self):
         print 'NEW TURN'
@@ -149,6 +154,11 @@ class OverLord:
                     for event in pygame.event.get():
 	                    if event.type==KEYDOWN:
 	                        if event.key==K_ESCAPE: sys.exit()
+                                if event.key==K_e:
+                                   self.maps[0].effects[0].Create([self.cursor.pos[0],self.cursor.pos[1]])
+                                   #self.maps[0].effects.append(self.effects[0])
+                                   #self.maps[0].effects[-1].location[0]=self.cursor.pos[0]
+                                   #self.maps[0].effects[-1].location[1]=self.cursor.pos[1]
 	                        if event.key==K_RIGHT:
 	                            self.cursor.Move('right')
 	                        if event.key==K_LEFT:
